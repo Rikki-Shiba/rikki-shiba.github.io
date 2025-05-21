@@ -1,271 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shiba Kokusai Grade 4 Student Website Directory</title>
+    <title>Rikki Jones' Website</title>
     <style>
-        /*  Classes */
-        .center-align { 
-            padding: 10px;
-            display: table-cell;
-            text-align: center;
-            vertical-align: middle;
-         }
-        .table-container {
-            display: table;
-            width: 100%;
+        .title {
+            text-decoration: none;
         }
-        .content {
-            width: 800px;
-            display: inline-block;
-            align-content: center;
-            vertical-align: top;
-            text-align: center;
+
+        html { /* Change the default html settings */
+            font-family: Tahoma, sans-serif;
+            font-size: 16px;
+            background: #F5F5F0;
+            max-width: 900px;
+            padding-left: 2%;
+            padding-right: 3%;
+            margin: 0 auto;
         }
-        .content-element {
-            width: 250px;
-            text-align: center;
+
+        a { /* Change the default <a> link tags */
+            color: black;
+            font-weight: bold;
         }
-        .table-padding { padding-top: 20px; }
-        
-        /* Elements */
-        td { padding-top: 5px; }
+
+        p {
+            margin-top: 0px;
+            text-align: justify;
+        }
+
+        div.heading {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 4ch;
+        }
+
     </style>
-    <base target="_blank"> <!-- set default <a> behavior to always open a new tab -->
 </head>
 <body>
+    <br>
+    <center> <!-- Depreciated in HTML5 -->
+        <div style="display: inline-block; vertical-align: middle;"> <!--  -->
+            <a href="index.html" class="title">
+                <b style="font-size: 130%;">RIKKI JONES' WEBSITE</b>
+                <br>
+            </a>
+            <hr> <!-- Hotizontal Bar will resize to the inline block -->
+            <div style="text-align: justify; display: inline-block; width: 100%">
+                <a class="title" href="./about.html" target="_self">ABOUT</a>
+                &nbsp;&nbsp;
+                <a class="title" href="./directory.html" target="_self">STUDENT DIRECTORY</a>
+                &nbsp;&nbsp;
+                <a class="title" href="./photoclub.html" target="_self">PHOTO CLUB</a>
+                &nbsp;&nbsp;
+                <a class="title" href="http://www.github.com/rikki-shiba" target="_blank">GITHUB REPOSITORY</a>
+            </div>
+        </div>
+    </center>
+    <br><br>
+    <div class="heading">Rikki Jones' Website</div>
+    <hr>
+    <p>Welcome to my portfolio website. This is a sample website for Shiba Kokusai Grade 4's IT WebDev Course.</p>
 
-<div>
-    <h1 style = "text-align: center;">Shiba Kokusai - Grade 4 Student Website Directory</h1>
-</div>
+    <div class="heading">TEMPORARY</div>
+        <hr/>
+        <p style="text-align: left;margin-bottom: 1ch;">
 
-<div class = "table-container">
-    <div class = "center-align">
-        <table class = "content">
-            <tr>
-                <th class = "content-element"><h2>Student Number</h2></th>
-                <th class = "content-element"><h2>Student Name</h2></th>
-                <th class = "content-element"><h2>Link</h2></th>
-                <th class = "content-element"><h2>Github Repository</h2></th>
-           </tr><br>
-
-            <!-- Teachers -->
-            <tr>
-                <td>Teacher</td>
-                <td>Rikki Jones</td>
-                <td><a href="http://rikki-shiba.github.io">Website</a></td>
-                <td><a href="http://www.github.com/rikki-shiba">Link</a></td>
-            </tr>
-            <tr>
-                <td>Teacher</td>
-                <td>Nazzer Nicerio</td>
-                <td><a href="http://naz-shiba.github.io">Website</a></td>
-                <td><a href="http://www.github.com/naz-shiba">Link</a></td>
-            </tr>
-
-            <!-- Students -->
-            <tr>
-                <td class="table-padding">01</td> <!-- 4-B-01 -->
-                <td class="table-padding">Kosei Aoyama</td>
-                <td class="table-padding"><a href="http://kosei777.github.io">Website</a></td>
-                <td class="table-padding"><a href="http://www.github.com/kosei777">Link</a></td>
-            </tr>
-            <tr>
-                <td>02</td> <!-- 4-B-02 -->
-                <td>Nuha Asif</td>
-                <td><a href="http://nuhaasif.github.io">Website</a></td>
-                <td><a href="http://www.github.com/nuhaasif">Link</a></td>
-            </tr>
-            <tr>
-                <td>03</td> <!-- 4-B-03 -->
-                <td>Leo Anazawa</td>
-                <td><a href="http://Leo05172009.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Leo05172009">Link</a></td>
-            </tr>
-            <tr>
-                <td>04</td> <!-- 4-B-04 -->
-                <td>Jae Hyuok I</td>
-                <td><a href="http://Jaehyuok316.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Jaehyuok316">Link</a></td>
-            </tr>
-            <tr>
-                <td>05</td> <!-- 4-B-05 -->
-                <td>Gaku Idaka</td>
-                <td><a href="http://gaku1124.github.io">Website</a></td>
-                <td><a href="http://www.github.com/gaku1124">Link</a></td>
-            </tr>
-            <tr>
-                <td>06</td> <!-- 4-B-06 -->
-                <td>Masaki Uchida</td>
-                <td><a href="http://Masaki0306.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Masaki0306">Link</a></td>
-            </tr>
-            <tr>
-                <td>07</td> <!-- 4-B-07 -->
-                <td>Yuua Kakehata</td>
-                <td><a href="http://Yuua-0616-SK.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Yuua-0616-SK">Link</a></td>
-            </tr>
-            <tr>
-                <td>08</td> <!-- 4-B-08 -->
-                <td>Yukitaka Ki</td>
-                <td><a href="http://jsans209803.github.io">Website</a></td>
-                <td><a href="http://www.github.com/jsans209803">Link</a></td>
-            </tr>
-            <tr>
-                <td>09</td> <!-- 4-B-09 -->
-                <td>Mimi Griffith</td>
-                <td><a href="http://mimikke.github.io">Website</a></td>
-                <td><a href="http://www.github.com/mimikke">Link</a></td>
-            </tr>
-            <tr>
-                <td>10</td> <!-- 4-B-10 -->
-                <td>Mutsuki Kono</td>
-                <td><a href="http://Mutsuki372.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Mutsuki372">Link</a></td>
-            </tr>
-            <tr>
-                <td>11</td> <!-- 4-B-11 -->
-                <td>Miu Saito</td>
-                <td><a href="http://Miu-Shiba.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Miu-Shiba">Link</a></td>
-            </tr>
-            <tr>
-                <td>12</td> <!-- 4-B-12 -->
-                <td>Riyo Shimizu</td>
-                <td><a href="http://RiyoShimizu.github.io">Website</a></td>
-                <td><a href="http://www.github.com/RiyoShimizu">Link</a></td>
-            </tr>
-            <tr>
-                <td>13</td> <!-- 4-B-13 -->
-                <td>Alina Zhiai Zhou</td>
-                <td><a href="http://AlinazhiaiZHOU.github.io">Website</a></td>
-                <td><a href="http://www.github.com/AlinazhiaiZHOU">Link</a></td>
-            </tr>
-            <tr>
-                <td>14</td> <!-- 4-B-14 -->
-                <td>Iharu Issei Shou</td>
-                <td><a href="http://Iharu-shiba.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Iharu-shiba">Link</a></td>
-            </tr>
-            <tr>
-                <td>15</td> <!-- 4-B-15 -->
-                <td>Leon Suzuki</td>
-                <td><a href="http://leon-suzuki.github.io">Website</a></td>
-                <td><a href="http://www.github.com/leon-suzuki">Link</a></td>
-            </tr>
-            <tr>
-                <td>16</td> <!-- 4-B-16 -->
-                <td>Rei Suzuki</td>
-                <td><a href="http://ReiSuski.github.io">Website</a></td>
-                <td><a href="http://www.github.com/ReiSuski">Link</a></td>
-            </tr>
-            <tr>
-                <td>17</td> <!-- 4-B-17 -->
-                <td>Saasha Sudo</td>
-                <td><a href="http://sasha3009.github.io">Website</a></td>
-                <td><a href="http://www.github.com/sasha3009">Link</a></td>
-            </tr>
-            <tr>
-                <td>18</td> <!-- 4-B-18 -->
-                <td>Mizuki Tada</td>
-                <td><a href="http://Naomimaru9876.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Naomimaru9876">Link</a></td>
-            </tr>
-            <tr>
-                <td>19</td> <!-- 4-B-19 -->
-                <td>Riko Tamogami</td>
-                <td><a href="http://Riko-shiba.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Riko-shiba">Link</a></td>
-            </tr>
-            <tr>
-                <td>20</td> <!-- 4-B-20 -->
-                <td>Ellie Tsukii</td>
-                <td><a href="http://Ellie1002.github.io">Website</a></td>
-                <td><a href="http://www.github.com/Ellie1002">Link</a></td>
-            </tr>
-            <tr>
-                <td>21</td> <!-- 4-B-21 -->
-                <td>Kaito Matsushita</td>
-                <td><a href="http://kaito4190.github.io">Website</a></td>
-                <td><a href="http://www.github.com/kaito4190">Link</a></td>
-            </tr>
-            <tr>
-                <td>22</td> <!-- 4-B-22 -->
-                <td>Phillip Miyazaki</td>
-                <td><a href="http://philip515.github.io">Website</a></td>
-                <td><a href="http://www.github.com/philip515">Link</a></td>
-            </tr>
-            <tr>
-                <td>23</td> <!-- 4-B-23 -->
-                <td>Saya Yashima</td>
-                <td><a href="http://sayayashima.github.io">Website</a></td>
-                <td><a href="http://www.github.com/sayayashima">Link</a></td>
-            </tr>
-            <tr>
-                <td>24</td> <!-- 4-B-24 -->
-                <td>Jo Yabuki</td>
-                <td><a href="http://joeyab0621.github.io">Website</a></td>
-                <td><a href="http://www.github.com/joeyab0621">Link</a></td>
-            </tr>
-            <tr>
-                <td>25</td> <!-- 4-B-25 -->
-                <td>Rio Yoneyama</td> 
-                <td><a href="http://rio0969.github.io">Website</a></td>
-                <td><a href="http://www.github.com/rio0969">Link</a></td>
-            </tr>
-            <tr>
-                <td>26</td> <!-- 4-B-26 -->
-                <td>Zifan Wang</td>
-                <td><a href="http://zifan1111.github.io">Website</a></td>
-                <td><a href="http://www.github.com/zifan1111">Link</a></td>
-            </tr>
-
-        </table>
-    </div>
-</div>
-
-<div>
-    <h1 style = "text-align: center; padding-top: 20px">Lesson Directory</h1>
-</div>
-
-<div class = "table-container">
-    <div class = "center-align">
-        <table class = "content">
-            <tr>
-                <th class = "content-element">Date</th>
-                <th class = "content-element">Details</th>
-                <th class = "content-element">Webpage Link</th>
-                <th class = "content-element">Code Link</th>
-           </tr>
-           <tr>
-                <td class="table-padding">W2D1</td>
-                <td class="table-padding">First Webpage!</td>
-                <td class="table-padding"><a href="W2D1.html" target=_self>Link</a></td> <!-- target=_self to open the page in this tab-->
-                <td class="table-padding"><a href="https://github.com/Rikki-Shiba/rikki-shiba.github.io/blob/main/W2D1.html">Code</a></td>
-           </tr>
-           <tr>
-                <td>W2D2</td>
-                <td>Resizing Images</td>
-                <td><a href="W2D2a.html" target=_self>Link</a></td> <!-- target=_self to open the page in this tab-->
-                <td><a href="https://github.com/Rikki-Shiba/rikki-shiba.github.io/blob/main/W2D2a.html">Code</a></td>
-           </tr>
-           <tr>
-                <td>W2D2</td>
-                <td>Creating a Parent Directory</td>
-                <td><a href="W2D2b.html" target=_self>Link</a></td> <!-- target=_self to open the page in this tab-->
-                <td><a href="https://github.com/Rikki-Shiba/rikki-shiba.github.io/blob/main/W2D2b.html">Code</a></td>
-           </tr>
-           <tr>
-                <td>W3D1</td>
-                <td>Making Links</td>
-                <td><a href="W3D1.html" target=_self>Link</a></td> <!-- target=_self to open the page in this tab-->
-                <td><a href="https://github.com/Rikki-Shiba/rikki-shiba.github.io/blob/main/W3D1.html">Code</a></td>
-            </tr>
-            <tr>
-                <td>W4D1</td>
-                <td>April Review & Style Tag</td>
-                <td><a href="W4D1.html" target=_self>Link</a></td> <!-- target=_self to open the page in this tab-->
-                <td><a href="https://github.com/Rikki-Shiba/rikki-shiba.github.io/blob/main/W4D1.html">Code</a></td>
-            </tr>
+         17/05/2025: 
+        <a href="2168/epilogue">IBM PS/1 2168: Epilogue</a>
+        <br>
 </body>
 </html>
