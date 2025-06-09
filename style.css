@@ -1,31 +1,91 @@
 /* style.css */
 
 .title {
-            text-decoration: none;
-        }
+    text-decoration: none;
+}
 
-        html { /* Change the default html settings */
-            font-family: Tahoma, sans-serif;
-            font-size: 16px;
-            background: #F5F5F0;
-            max-width: 900px;
-            padding-left: 2%;
-            padding-right: 3%;
-            margin: 0 auto;
-        }
+html { /* Change the default html settings */
+    font-family: Tahoma, sans-serif;
+    font-size: 16px;
+    /*background: #3F5EFB;
+    background: radial-gradient(circle, rgba(63, 94, 251, 1) 0%, rgba(252, 70, 107, 1) 100%); */
+    background: #F5F5F0;
 
-        a { /* Change the default <a> link tags */
-            color: black;
-            font-weight: bold;
-        }
+    /*
+    background-image: url('pizza.jpeg');
+    background-color: #cccccc
+    */
 
-        p {
-            margin-top: 0px;
-            text-align: justify;
-        }
+    max-width: 900px;
+    padding-left: 2%;
+    padding-right: 3%;
+    margin: 0 auto;
+    text-align: center;
+}
 
-        div.heading {
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-top: 4ch;
-        }
+a { /* Change the default <a> link tags */
+    color: black;
+    font-weight: bold;
+}
+
+p {
+    margin-top: 0px;
+    text-align: justify;
+}
+
+div.heading {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 4ch;
+}
+
+table, th, td { /* We are using tables on this page, so let's alter the defaults */
+    border: 0px;
+    text-align: center;
+}
+
+
+/* CSS Testing */
+h1 {
+    color: red;
+}
+
+h2 {
+    color: #ff5733;
+}
+
+h3 {
+    color: rgb(0, 0, 0);
+}
+
+.box { /* class */
+    max-width: 60%;
+    height: 400px;
+    background-image: url('photo01.jpg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    border: 2px solid black;
+    padding: 10px;
+    margin: auto; /* aligns the image in the center of the page */
+    border-radius: 10%;
+    object-fit: cover;
+}
+
+.font2 { /* <p class = "font2"> Text </p> */
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    text-align: center;
+    color: darkolivegreen;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: rgb(0,0,0);
+}
+
+.imgs {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    filter: grayscale(59%);
+}
