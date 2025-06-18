@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure CSS Fullscreen Image Effect</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: scale(1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .image-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Hidden checkbox method */
+        .fullscreen-checkbox {
+            display: none;
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .fullscreen-checkbox:checked + .fullscreen-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .fullscreen-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            transform: scale(0.8) rotate(5deg);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .fullscreen-checkbox:checked + .fullscreen-overlay .fullscreen-image {
+            transform: scale(1) rotate(0deg);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            25% { transform: translateY(-10px) rotate(1deg) scale(1); }
+            50% { transform: translateY(-5px) rotate(-1deg) scale(1); }
+            75% { transform: translateY(-15px) rotate(0.5deg) scale(1); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            z-index: 1001;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1) rotate(90deg);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Alternative method using :target */
+        .target-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .target-overlay:target {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .target-overlay:target .fullscreen-image {
+            transform: scale(1) rotate(0deg);
+        }
+
+        /* Method indicator */
+        .method-section {
+            margin-bottom: 3rem;
+        }
+
+        .method-title {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            
+            .close-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Pure CSS Fullscreen Effects ✨</h1>
+        
+        <!-- Method 1: Checkbox Method -->
+        <div class="method-section">
+            <div class="method-title">Method 1: Hidden Checkbox Technique</div>
+            <div class="gallery">
+                <div class="image-item">
+                    <label for="img1">
+                        <img src="https://picsum.photos/400/250?random=1" alt="Beautiful landscape" class="gallery-image">
+                    </label>
+                    <input type="checkbox" id="img1" class="fullscreen-checkbox">
+                    <div class="fullscreen-overlay">
+                        <label for="img1" class="close-btn">×</label>
+                        <img src="https://picsum.photos/800/600?random=1" alt="Beautiful landscape" class="fullscreen-image">
+                    </div>
+                </div>
+                
+                <div class="image-item">
+                    <label for="img2">
+                        <img src="https://picsum.photos/400/250?random=2" alt="City skyline" class="gallery-image">
+                    </label>
+                    <input type="checkbox" id="img2" class="fullscreen-checkbox">
+                    <div class="fullscreen-overlay">
+                        <label for="img2" class="close-btn">×</label>
+                        <img src="https://picsum.photos/800/600?random=2" alt="City skyline" class="fullscreen-image">
+                    </div>
+                </div>
+                
+                <div class="image-item">
+                    <label for="img3">
+                        <img src="https://picsum.photos/400/250?random=3" alt="Nature scene" class="gallery-image">
+                    </label>
+                    <input type="checkbox" id="img3" class="fullscreen-checkbox">
+                    <div class="fullscreen-overlay">
+                        <label for="img3" class="close-btn">×</label>
+                        <img src="https://picsum.photos/800/600?random=3" alt="Nature scene" class="fullscreen-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Method 2: :target Method -->
+        <div class="method-section">
+            <div class="method-title">Method 2: CSS :target Technique</div>
+            <div class="gallery">
+                <div class="image-item">
+                    <a href="#fullscreen4">
+                        <img src="https://picsum.photos/400/250?random=4" alt="Ocean view" class="gallery-image">
+                    </a>
+                </div>
+                
+                <div class="image-item">
+                    <a href="#fullscreen5">
+                        <img src="https://picsum.photos/400/250?random=5" alt="Mountain vista" class="gallery-image">
+                    </a>
+                </div>
+                
+                <div class="image-item">
+                    <a href="#fullscreen6">
+                        <img src="https://picsum.photos/400/250?random=6" alt="Forest path" class="gallery-image">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Target overlays -->
+    <div id="fullscreen4" class="target-overlay">
+        <a href="#" class="close-btn">×</a>
+        <img src="https://picsum.photos/800/600?random=4" alt="Ocean view" class="fullscreen-image">
+    </div>
+    
+    <div id="fullscreen5" class="target-overlay">
+        <a href="#" class="close-btn">×</a>
+        <img src="https://picsum.photos/800/600?random=5" alt="Mountain vista" class="fullscreen-image">
+    </div>
+    
+    <div id="fullscreen6" class="target-overlay">
+        <a href="#" class="close-btn">×</a>
+        <img src="https://picsum.photos/800/600?random=6" alt="Forest path" class="fullscreen-image">
+    </div>
+</body>
+</html>

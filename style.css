@@ -7,15 +7,7 @@
 html { /* Change the default html settings */
     font-family: Tahoma, sans-serif;
     font-size: 16px;
-    /*background: #3F5EFB;
-    background: radial-gradient(circle, rgba(63, 94, 251, 1) 0%, rgba(252, 70, 107, 1) 100%); */
     background: #F5F5F0;
-
-    /*
-    background-image: url('pizza.jpeg');
-    background-color: #cccccc
-    */
-
     max-width: 900px;
     padding-left: 2%;
     padding-right: 3%;
@@ -30,7 +22,7 @@ a { /* Change the default <a> link tags */
 
 p {
     margin-top: 0px;
-    text-align: justify;
+    text-align: justify; /* The text will spread evenly from left-to-right margins */
 }
 
 div.heading {
@@ -63,7 +55,7 @@ h3 {
     height: 400px;
     background-image: url('photo01.jpg');
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: cover;
     border: 2px solid black;
     padding: 10px;
     margin: auto; /* aligns the image in the center of the page */
@@ -83,9 +75,28 @@ h3 {
     -webkit-text-stroke-color: rgb(0,0,0);
 }
 
-.imgs {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 10px;
-    filter: grayscale(59%);
+.font3 {
+    transition: all 300ms ease-in;
+}
+
+.font3:hover {
+    color: red;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    max-width: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: brightness(110%) cont5rast(120%);
+    transition: filter 0.3s ease;
+
+    outline-style: solid;
+    outline-color: rgb(0,0,0);
+    outline-width: 2px;
+}
+
+.profile-image:hover {
+    filter: brightness(130%) contrast(140%) saturate(120%);
 }

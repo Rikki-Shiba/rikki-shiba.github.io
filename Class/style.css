@@ -1,0 +1,22 @@
+/* CSS Style Sheet */
+
+h1 {
+    color: red;
+}
+h2 {
+    color: #ff0000;
+}
+h3 {
+    color: rgb(255,0,0);
+}
+.newFont {
+    font-size: 24px;
+    font-family: tahoma, sans-serif;
+    font-weight: bold;
+    text-align: center;
+    color: darkolivegreen;
+    text-transform: uppercase;
+    letter-spacing: 20px;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: rgb(0,0,0);
+}
