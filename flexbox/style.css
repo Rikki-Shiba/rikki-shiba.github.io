@@ -1,0 +1,15 @@
+
+.navbar {
+    display: flex;
+    color: white;
+    background: #333333;
+    font-family:'Trebuchet MS', sans-serif;
+    font-size: 1.5rem;
+    padding: 1rem 2rem;
+    justify-content: space-between;
+}
+
+.navbar-link {
+    color: white;
+    text-decoration: none;
+}
