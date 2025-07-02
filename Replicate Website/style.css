@@ -1,0 +1,34 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.navbar {
+    display: flex;
+    color: white;
+    background-color: #002b66;
+
+    /* Add more properties */
+
+}
+
+/*
+General Hints:
+Clone this repository
+Remember when inserting images from a folder to add "./Images/(filename)"
+We are importing an external font. When using it, use: font-family: 'Noto Sans JP'
+
+Navbar Hints:
+Every single letter has a different class that changes the color on hover transition.
+Page 2, Page 3 and Page 4 hover changes the color to silver.
+
+Content Hints:
+There is a 5px margin on the border, and the color is #6caddb
+Margins are HEAVILY used to move content further in and away from other content
+
+Footer Hints:
+Shiba School Logo, 中学校について,高等学校について and SNS icons hover transition affects Opacity
+中学校について background color is #c5535b
+高等学校について background color is #56bbed
+*/
