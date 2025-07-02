@@ -1,0 +1,137 @@
+/* Elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Classes */
+.navbar {
+    display: flex;
+    color: white;
+    background-color: #002b66;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 2rem;
+    padding: 2rem;
+    justify-content: space-between;
+    align-items: center; /* Different font sized items will remain centered */
+}
+
+.navbar-link {
+    color: white;
+    text-decoration: none;
+    transition: all 0.5s ease;
+}
+
+.navbar-link:hover {
+    color: silver;
+}
+
+.content-flexbox {
+    display: flex;
+    font-family: Tahoma, sans-serif;
+    padding: 0px;
+    word-break: break-word;
+}
+
+.content-side-pane {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid #333;
+    border-style: groove;
+    border-radius: 5px;
+}
+
+.content-main-pane {
+    display: flex;
+    flex: 3;
+    justify-content: center;
+    align-items: justify;
+    flex-direction: column;
+    padding: 0.2rem;
+}
+
+.footer-bar {
+    display: flex;
+    color: white;
+    height: 70px;
+    background-color: #002b66;
+    justify-content: space-between;
+    padding: 20px 200px;
+
+}
+
+.logo-fade {
+    transition: opacity 0.5s ease;
+}
+
+.logo-fade:hover {
+    opacity: 0.5;
+}
+
+
+.yoshino {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: all 5s ease-in-out 5s;
+}
+
+.yoshino:hover {
+    transform: rotate(360deg);
+}
+
+.shiba-jhs {
+    color: white;
+    font-family: 'Noto Sans JP';
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: white;
+    background-color: #002b66;
+    padding: 8px 10px;
+    background-color:#c5535b;
+    border-radius: 25px;
+    transition: all 0.5s ease;
+}
+
+.shiba-jhs:hover {
+    opacity: 0.5;
+}
+
+.shiba-shs {
+    color: white;
+    font-family: 'Noto Sans JP';
+    font-size: 0.9rem;
+    text-decoration: none;
+    padding: 8px 10px;
+    background-color:#56bbed;
+    border-radius: 25px;
+    transition: all 0.5s ease;
+}
+
+.shiba-shs:hover {
+    opacity: 0.5;
+}
+
+.letter-W { transition: color 0.5s ease; cursor: pointer; }
+.letter-W:hover { color: red; }
+.letter-e { transition: color 0.5s ease; cursor: pointer; }
+.letter-e:hover { color: yellow; }
+.letter-b { transition: color 0.5s ease; cursor: pointer; }
+.letter-b:hover { color: orange; }
+.letter-s { transition: color 0.5s ease; cursor: pointer; }
+.letter-s:hover { color: green; }
+.letter-i { transition: color 0.5s ease; cursor: pointer; }
+.letter-i:hover { color: blue; }
+.letter-t { transition: color 0.5s ease; cursor: pointer; }
+.letter-t:hover { color: indigo; }
+.letter-N { transition: color 0.5s ease; cursor: pointer; }
+.letter-N:hover { color: violet; }
+.letter-a { color:white; text-decoration:none; transition: color 0.5s ease; }
+.letter-a:hover { color: goldenrod; }
+.letter-m { transition: color 0.5s ease; cursor: pointer; }
+.letter-m:hover { color:aquamarine; }
