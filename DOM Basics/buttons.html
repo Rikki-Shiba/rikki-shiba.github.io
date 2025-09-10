@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<head>
+    <title id="pageTitle">DOM Basics</title>
+</head>
+<body>
+    <h1 id="pageHeading">This is a heading</h1>
+    <p id="pageMessage">This is the message</p>
+    <button id="btnChangeTitle">Change the Title</button><br>
+    <button id="btnChangeHeading">Change the Heading</button><br>
+    <button id="btnChangeMessage">Change the Message</button><br>
+    <button id="btnAddImage">Add an Image</button>
+
+    <script>
+        // Element Variables
+        const pageTitle = document.getElementById("pageTitle");
+        const pageHeading = document.getElementById("pageHeading");
+        const pageMessage = document.getElementById("pageMessage");
+        
+        
+        // Button Variables
+        const btnChangeTitle = document.getElementById("btnChangeTitle");
+        const btnChangeHeading = document.getElementById("btnChangeHeading");
+        const btnChangeMessage = document.getElementById("btnChangeMessage");
+        const btnAddImage = document.getElementById("btnAddImage");
+
+        // Event Listener for Click Events
+        btnChangeTitle.addEventListener('click', function(event){
+            pageTitle.textContent = "Changed Title!";
+        });
+        btnChangeHeading.addEventListener('click', function(event){
+            pageHeading.innerHTML = "<strong>Changed Heading!</strong>";
+        });
+        btnChangeMessage.addEventListener('click', function(event){
+            pageMessage.textContent = "Changed Message!";
+        });
+        btnAddImage.addEventListener('click', function(event){
+            const newDiv = document.createElement('div');
+            const parentElement = document.querySelector(`body`);
+            parentElement.appendChild(newDiv);
+            newDiv.innerHTML = `<img src="https://pngimg.com/uploads/pacman/pacman_PNG79.png" width=200px>`;
+        })
+        
+
+    </script>
+</body>
+</html>
