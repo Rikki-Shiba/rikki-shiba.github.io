@@ -1,0 +1,55 @@
+<!doctype html>
+<head>
+    <title>Guessing Game</title>
+</head>
+<body style="text-align: center">
+    <h1>Guessing Game</h1>
+    <p>
+        I will randomly generate 5 numbers between 1 and 20.<br />
+        You must try and guess one of the 5 numbers.<br />
+        I will track how many attempts it took you to get it correct.<br />
+        Good luck!
+    </p>
+    <br /><br />
+    <h2 style="color: red">Refresh the page to try again.</h2>
+    <script>
+        // Step 1: Use a FOR loop to create 5 target numbers
+        let target1, target2, target3, target4, target5;
+        for (/* Create your FOR LOOP */) {
+            let randomNumber = Math.floor(Math.random() * 20) + 1; // Generate a random number between 1~20
+
+            // IF-ELSE IF Control Flow to assign target numbers
+            if (/* If this is our first loop, assign our first Random Number to Target 1 */) {
+                target1 = randomNumber;
+            } else if (/* LOGIC */) {
+                target2 = randomNumber;
+            } else if (/* LOGIC */) {
+                target3 = randomNumber;
+            } else if (/* LOGIC */) {
+                target4 = randomNumber;
+            } else { // We reached the last loop, don't need a logic check
+                target5 = randomNumber;
+            }
+        }
+        alert("I've picked 5 secret numbers between 1-20!");
+        // Create a console.log output to display the target numbers
+        console.log(/* Target Numbers: */);
+
+        // Step 2: Use a WHILE LOOP for guessing
+        let guess = 0;
+        let attempts = 0;
+        let won = false;
+
+        while (/* Create your WHILE LOOP Condition */) {
+
+        // Your Code Here
+        // 1: Get user's guess
+        // 2: Count the attempt
+        // 3: Check if guess matches ANY target number (Logic Operator: OR)
+        // 4: Give feedback ("Nope, try again!" | "Congratulations!")
+        // 5: If correct, set won = true
+        // * Win condition is if ANY target number (As stated in Step 3)
+
+        }
+    </script>
+</body>
