@@ -39,7 +39,19 @@
 
     <script>
         
-        // Javascript Goes Here
+        // Click Event: Method 1 (Using Variables)
+        const btnClick = document.querySelector(`#clickButton`);
+        btnClick.addEventListener('click', function(){
+            const outClick = document.querySelector(`#clickMessage`);
+            outClick.textContent = "You clicked the button!"; // using textContent
+        });
+
+        // Click Event: Method 2 (No Variables)
+        document.querySelector(`#clickButton`).addEventListener('click', function(){
+            document.querySelector(`#clickMessage`).innerHTML = "You Clicked the Button!"; // using innerHTML
+        });
+
+
 
     </script>
 </body>

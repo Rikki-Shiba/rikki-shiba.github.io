@@ -1,16 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <head>
     <title>Guessing Game</title>
 </head>
 <body style="text-align: center">
-    <h1>Guessing Game</h1>
+    <h1>Guessing Game Results</h1>
     <p>
-        I will randomly generate 5 numbers between 1 and 20.<br />
-        You must try and guess one of the 5 numbers.<br />
-        I will track how many attempts it took you to get it correct.<br />
-        Good luck!
+        Number of Guesses: <span id="guessCount"></span><br />
+        Numbers Guessed: <span id="guessedNumbers"></span><br />
+        The 5 Secret Numbers: <span id="secretNumbers"></span><br />
     </p>
-    <br /><br />
+    <br><br>
     <h2 style="color: red">Refresh the page to try again.</h2>
     <script>
         // Step 1: Use a FOR loop to create 5 target numbers
@@ -51,5 +50,12 @@
         // * Win condition is if ANY target number (As stated in Step 3)
 
         }
+
+        // 6: Update the number of Attempts and Display the Secret Numbers
+        document.getElementById(/* elementID */).textContent = /* Variable */;
+        document.querySelect(/* BackTick elementID */).textContent = ``/* BackTick Template String: See Week 2 PowerPoint! */;
+
+        // 7: Remove the last two characters from the guessedNumbers display, for BEAUTIFICATION
+        document.getElementById(/* elementID */).textContent = document.getElementById(/* elementId */).textContent.slice(0. -2); // remove the last 2 characters ", "
     </script>
 </body>
