@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<head>
+    <title>Random Story Generator</title>
+</head>
+<body>
+    <h1> Random Story Generator</h1>
+
+    <p id="story"> </p>
+
+    <script>
+        function getRandomElement(array) {
+            return array(Math.floor(Math.random() * array.length));
+        }
+
+        function generateStory() {
+            const heroes = ["a brave knight", "a clever wizard", "a sneaky ninja"];
+            const villains = ["an evil dragon", "a wicked witch", "a robot army"];
+            const places = ["a haunted castle", "a mysterious forest", "a space station"];
+
+            const hero = getRandomElement(heroes);
+            const villain = getRandomElement(villains);
+            const place = getRandomElement(places);
+
+            return `Once upon a time, ${hero} had to defeat ${villain} in ${place}.`;
+        }
+
+        // Display the story
+        document.getElementById("story").innerHTML = generateStory();
+
+    </script>
+</body>
+</html>
