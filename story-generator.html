@@ -2,14 +2,15 @@
 <head>
     <title>Random Story Generator</title>
 </head>
-<body>
+<body style="text-align: center">
     <h1> Random Story Generator</h1>
 
-    <p id="story"> </p>
+    <span id="story" ></span>
 
     <script>
         function getRandomElement(array) {
-            return array(Math.floor(Math.random() * array.length));
+            console.log("Randomizing");
+            return array[Math.floor(Math.random() * array.length)];
         }
 
         function generateStory() {
