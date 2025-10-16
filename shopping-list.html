@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<head>
+    <title>Shopping List</title>
+    <meta charset = "utf-8"> <!-- To allow Japanese input -->
+</head>
+<body>
+    <!-- Div for Shopping List w/ Style -->
+    <div id="shoppingList" style="  padding: 1rem; 
+                                    border-color: black;
+                                    border-width: 2px;
+                                    border-radius: 20%;">
+        Shopping List:<br>
+    </div>
+    <!-- Create a Div Flexbox  for our Array Modifications -->
+     <div style="display: flex; justify-content: space-evenly;">
+        <input id="addToList" placeholder="Type an Item">
+        <button id="addToFront">Add to the Front</button>
+        <button id="addToEnd">Add to the End</button>
+        <button id="removeFromFront">Remove from the Front</button>
+        <button id="removeFromEnd">Remove from the End</button>
+     </div>
+
+     <script>
+        // 1: Assign variables to our HTML elements - first one is provided
+        const btnAddToFront = document.getElementById("addToFront");
+        
+
+        // 2: Create your shopping list array with BREAD and MILK already added
+
+
+        // 3: Create a function to update the shopping list
+        //    Call this function at the end of every button press function
+        //    to keep the shopping list up-to-date for the user
+        //    This is called in other functions, so needs to be declared first
+        function updateShoppingList() {
+            // .forEach() method loop to print to the shoppingList Div in our HTML
+
+        }
+
+
+        // 4: Add Event Listeners for Button Clicks - first one is provided
+        btnAddToFront.addEventListener('click', function() {
+            // Add your input field data to the front of the array
+
+            // Update the shopping list by calling the function
+            updateShoppingList();
+        })
+
+        
+
+
+     </script>
+</body>
+</html>
