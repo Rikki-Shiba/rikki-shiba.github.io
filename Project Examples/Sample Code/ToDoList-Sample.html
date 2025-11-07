@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 70%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 12px;
+            background: #f9f9f9;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            padding: 6px 12px;
+            font-size: 14px;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My To-Do List</h1>
+        
+        <input type="text" id="todoInput" placeholder="Add a new task...">
+        <button id="addBtn">Add</button>
+
+        <ul id="todoList"></ul>
+    </div>
+
+    <script>
+        /*
+        =======================================================================
+        INTERACTIVE TO-DO LIST
+        =======================================================================
+        PROJECT IDEA: Build a to-do list that saves your tasks!
+        
+        STEP 1: CREATE YOUR TODOS ARRAY
+        - Create an empty array called 'todos' to store all your tasks
+        - Each todo will be an object with properties like:
+          * id: a unique number (use Date.now() to generate)
+          * text: the task description
+        
+        STEP 2: CREATE A loadTodos() FUNCTION
+        - Get saved todos from localStorage using localStorage.getItem('todos')
+        - If there are saved todos, convert them from JSON string to array
+          using JSON.parse()
+        - Assign the parsed data to your todos array
+        - Call showTodos() at the end to display them
+        
+        STEP 3: CREATE A saveTodos() FUNCTION
+        - Convert your todos array to a JSON string using JSON.stringify()
+        - Save it to localStorage using localStorage.setItem('todos', jsonString)
+        
+        STEP 4: CREATE AN addTodo() FUNCTION
+        - Get the input element by its id
+        - Get the text value from the input and trim whitespace
+        - If the text is empty, return (don't add empty todos!)
+        - Create a new todo object with id and text properties
+        - Add the new todo to the todos array using .push()
+        - Call saveTodos() to save to localStorage
+        - Call showTodos() to update the display
+        - Clear the input field by setting its value to empty string
+        
+        STEP 5: CREATE A deleteTodo() FUNCTION
+        - This function should take an id parameter
+        - Use .filter() to create a new array without the todo that matches the id
+        - Assign the filtered array back to todos
+        - Call saveTodos() and showTodos()
+        
+        STEP 6: CREATE A showTodos() FUNCTION
+        - Get the ul element by its id
+        - Clear it by setting innerHTML to empty string
+        - If todos array is empty, show a "no tasks" message
+        - Otherwise, loop through the todos array
+        - For each todo:
+          * Create a new li element
+          * Set its innerHTML to show the todo text and a delete button
+          * The delete button should have onclick="deleteTodo(todo.id)"
+          * Append the li to the ul
+        
+        STEP 7: SET UP EVENT LISTENERS
+        - Add a click event listener to the Add button that calls addTodo()
+        - Add a keypress event listener to the input that:
+          * Checks if the Enter key was pressed
+          * If yes, call addTodo()
+        
+        STEP 8: START THE APP
+        - Call loadTodos() to load any saved todos when the page loads
+        
+        TIPS:
+        - Test each function as you write it using console.log()
+        - Make sure to save AND show todos after any change
+        - Use descriptive variable names
+        - Remember: localStorage only stores strings, so use JSON!
+        =======================================================================
+        */
+        
+        // STEP 1: Create your todos array here
+        
+        
+        // STEP 2: Create your loadTodos() function here
+        
+        
+        // STEP 3: Create your saveTodos() function here
+        
+        
+        // STEP 4: Create your addTodo() function here
+        
+        
+        // STEP 5: Create your deleteTodo() function here
+        
+        
+        // STEP 6: Create your showTodos() function here
+        
+        
+        // STEP 7: Set up your event listeners here
+        
+        
+        // STEP 8: Start the app!
+        
+    </script>
+</body>
+</html>

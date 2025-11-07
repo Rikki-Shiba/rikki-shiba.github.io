@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Drawing Board</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: inline-block;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-btn {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 3px #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #333;
+            color: white;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        #canvas {
+            display: inline-grid;
+            gap: 1px;
+            background: #ccc;
+            border: 2px solid #333;
+        }
+
+        .cell {
+            width: 20px;
+            height: 20px;
+            background: white;
+            cursor: crosshair;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Pixel Drawing Board</h1>
+        
+        <div class="controls">
+            <div class="color-btn active" style="background: black;" data-color="#000000"></div>
+            <div class="color-btn" style="background: red;" data-color="#ff0000"></div>
+            <div class="color-btn" style="background: blue;" data-color="#0000ff"></div>
+            <div class="color-btn" style="background: green;" data-color="#00ff00"></div>
+            <div class="color-btn" style="background: yellow;" data-color="#ffff00"></div>
+            <div class="color-btn" style="background: purple;" data-color="#800080"></div>
+            <div class="color-btn" style="background: orange;" data-color="#ffa500"></div>
+            <div class="color-btn" style="background: pink;" data-color="#ffc0cb"></div>
+            <div class="color-btn" style="background: white;" data-color="#ffffff"></div>
+        </div>
+
+        <div class="controls">
+            <button onclick="clearBoard()">Clear Board</button>
+            <button onclick="saveDrawing()">Save Drawing</button>
+            <button onclick="loadDrawing()">Load Drawing</button>
+        </div>
+
+        <div class="canvas-wrapper">
+            <div id="canvas"></div>
+        </div>
+        
+        <div class="status" id="status">Click cells to draw!</div>
+    </div>
+
+    <script>
+        /*
+        =======================================================================
+        PIXEL DRAWING BOARD
+        =======================================================================
+        PROJECT IDEA #6: Build an interactive pixel art drawing application!
+        
+        STEP 1: CREATE YOUR VARIABLES
+        - Create a constant for GRID_SIZE (16 for a 16x16 grid)
+        - Create a variable for currentColor (start with '#000000' for black)
+        - Create an empty array called grid to store all cell colors
+        
+        STEP 2: CREATE THE initGrid() FUNCTION
+        - Get the canvas element using document.getElementById()
+        - Set the grid layout with style.gridTemplateColumns
+          (use template literals: `repeat(${GRID_SIZE}, 20px)`)
+        - Clear any existing content with innerHTML = ''
+        - Reset the grid array to empty
+        - Use a for loop from 0 to (GRID_SIZE * GRID_SIZE):
+          * Initialize grid[i] to white ('#ffffff')
+          * Create a new div element for each cell
+          * Set className to 'cell'
+          * Set dataset.index to i (to track position)
+          * Set background color to white
+          * Add a click event listener that calls paintCell(this)
+          * Append the cell to the canvas
+        
+        STEP 3: CREATE THE paintCell() FUNCTION
+        - Takes one parameter: the cell element that was clicked
+        - Get the index from cell.dataset.index (use parseInt!)
+        - Change the cell's style.background to currentColor
+        - Update grid[index] to store the currentColor
+        
+        STEP 4: SET UP COLOR BUTTON FUNCTIONALITY
+        - Use document.querySelectorAll('.color-btn') to get all color buttons
+        - Use forEach to add a click listener to each button:
+          * Remove 'active' class from all buttons first
+          * Add 'active' class to the clicked button
+          * Update currentColor to the button's dataset.color value
+        
+        STEP 5: CREATE THE clearBoard() FUNCTION
+        - Use confirm() to ask user if they're sure
+        - If they confirm:
+          * Call initGrid() to reset everything
+          * Call showStatus('Board cleared!')
+        
+        STEP 6: CREATE THE saveDrawing() FUNCTION
+        - Create an object with:
+          * grid: your grid array
+          * size: GRID_SIZE
+          * timestamp: new Date().toISOString() (optional but cool!)
+        - Convert the object to JSON using JSON.stringify()
+        - Save to localStorage with localStorage.setItem('pixelDrawing', jsonData)
+        - Call showStatus('Drawing saved successfully!')
+        
+        STEP 7: CREATE THE loadDrawing() FUNCTION
+        - Get saved data with localStorage.getItem('pixelDrawing')
+        - Check if savedData exists (if not, show "No saved drawing found!")
+        - Use try-catch for error handling:
+          * Parse the JSON with JSON.parse(savedData)
+          * Check if the saved size matches current GRID_SIZE
+          * Update your grid array with the loaded data
+          * Get all cells with document.querySelectorAll('.cell')
+          * Use forEach to update each cell:
+            - Get the index from cell.dataset.index
+            - Set cell.style.background to grid[index]
+          * Call showStatus('Drawing loaded successfully!')
+        - If there's an error, call showStatus('Error loading drawing!')
+        
+        STEP 8: CREATE THE showStatus() FUNCTION
+        - Get the status element with document.getElementById('status')
+        - Set its textContent to the message parameter
+        - Use setTimeout() to reset the message after 2000ms (2 seconds)
+          * Inside setTimeout, change textContent back to 'Click cells to draw!'
+        
+        STEP 9: START YOUR APPLICATION
+        - Call initGrid() to set up the board when page loads
+        
+        TIPS:
+        - Test each function as you build it using console.log()
+        - Remember: array indices start at 0
+        - localStorage only stores strings - that's why we use JSON!
+        - The 1D array maps to 2D: index 0 is top-left, index 15 is top-right
+        - Make sure to initialize the board before trying to draw!
+        =======================================================================
+        */
+        
+        // STEP 1: Create your variables here
+        
+        // STEP 2: Create your initGrid() function here
+        
+        // STEP 3: Create your paintCell() function here
+        
+        // STEP 4: Set up color button functionality here
+        
+        // STEP 5: Create your clearBoard() function here
+        
+        // STEP 6: Create your saveDrawing() function here
+        
+        // STEP 7: Create your loadDrawing() function here
+        
+        // STEP 8: Create your showStatus() function here
+        
+        // STEP 9: Initialize the board!
+        
+    </script>
+</body>
+</html>

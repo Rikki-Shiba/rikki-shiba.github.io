@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Expense Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .input-section, .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .total {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .expense-item:hover {
+            background: #f9f9f9;
+        }
+
+        .expense-info {
+            flex: 1;
+        }
+
+        .expense-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .expense-category {
+            font-size: 12px;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .expense-amount {
+            font-size: 18px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            width: auto;
+            padding: 5px 15px;
+            background: #e74c3c;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Personal Expense Tracker</h1>
+        
+        <div class="input-section">
+            <div class="form-group">
+                <label for="expenseName">Expense Name</label>
+                <input type="text" id="expenseName" placeholder="e.g., Lunch, Taxi, Groceries">
+            </div>
+            
+            <div class="form-group">
+                <label for="expenseAmount">Amount (¥)</label>
+                <input type="number" id="expenseAmount" placeholder="0" step="1" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="expenseCategory">Category</label>
+                <select id="expenseCategory">
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <button onclick="addExpense()">Add Expense</button>
+        </div>
+
+        <div class="filter-section">
+            <div class="form-group">
+                <label for="filterCategory">Filter by Category</label>
+                <select id="filterCategory" onchange="displayExpenses()">
+                    <option value="all">All Categories</option>
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="total" id="totalAmount">Total: ¥0</div>
+
+        <div class="expenses-list" id="expensesList"></div>
+    </div>
+
+    <script>
+        /*
+        =======================================================================
+        PERSONAL EXPENSE TRACKER
+        =======================================================================
+        PROJECT IDEA #3: Build a simple expense tracker that saves data locally!
+        
+        STEP 1: CREATE THE EXPENSES ARRAY
+        - Create an empty array called 'expenses' to store all expense objects
+        - Each expense object should have:
+          * id (use Date.now() to generate unique IDs)
+          * name (string)
+          * amount (number)
+          * category (string)
+        
+        STEP 2: CREATE A loadExpenses() FUNCTION
+        - This function should run when the page loads
+        - Use localStorage.getItem('expenses') to get saved data
+        - Use JSON.parse() to convert the JSON string back to an array
+        - If there's saved data, assign it to the expenses array
+        - Call displayExpenses() to show the loaded data
+        
+        STEP 3: CREATE A saveExpenses() FUNCTION
+        - Use JSON.stringify() to convert the expenses array to JSON
+        - Use localStorage.setItem('expenses', jsonString) to save it
+        - This keeps data even after closing the browser!
+        
+        STEP 4: CREATE AN addExpense() FUNCTION
+        - Get values from the input fields using document.getElementById()
+        - Validate that name is not empty and amount is greater than 0
+        - Create a new expense object with id, name, amount, and category
+        - Push the new expense into the expenses array
+        - Call saveExpenses() to persist the data
+        - Clear the input fields
+        - Call displayExpenses() to refresh the list
+        
+        STEP 5: CREATE A deleteExpense() FUNCTION
+        - Takes an id parameter
+        - Use array.filter() to create a new array without the expense with that id
+        - Assign the filtered array back to expenses
+        - Call saveExpenses() and displayExpenses()
+        
+        STEP 6: CREATE A calculateTotal() FUNCTION
+        - Takes an array of expenses as a parameter
+        - Use a for loop to add up all the amounts
+        - Return the total
+        
+        STEP 7: CREATE A filterExpenses() FUNCTION
+        - Get the selected category from the filter dropdown
+        - If category is 'all', return the entire expenses array
+        - Otherwise, use a for loop to build a new array with only
+          expenses that match the selected category
+        - Return the filtered array
+        
+        STEP 8: CREATE A displayExpenses() FUNCTION
+        - Call filterExpenses() to get the expenses to display
+        - Get the expensesList div element
+        - If no expenses, show the empty state message
+        - Otherwise, use a for loop to build HTML for each expense
+        - Use template literals (backticks) to create the HTML string
+        - Set the innerHTML of expensesList
+        - Call calculateTotal() with the filtered expenses
+        - Update the total display element
+        
+        STEP 9: START THE APPLICATION
+        - Call loadExpenses() when the page loads
+        
+        TIPS:
+        - Test each function as you write it using console.log()
+        - Make sure to handle edge cases (empty inputs, etc.)
+        - Use .toFixed(0) to format yen amounts without decimals
+        - Remember that localStorage only stores strings (use JSON!)
+        =======================================================================
+        */
+
+        // STEP 1: Create your expenses array here
+
+        // STEP 2: Create your loadExpenses() function here
+
+        // STEP 3: Create your saveExpenses() function here
+
+        // STEP 4: Create your addExpense() function here
+
+        // STEP 5: Create your deleteExpense() function here
+
+        // STEP 6: Create your calculateTotal() function here
+
+        // STEP 7: Create your filterExpenses() function here
+
+        // STEP 8: Create your displayExpenses() function here
+
+        // STEP 9: Start the application!
+    </script>
+</body>
+</html>
