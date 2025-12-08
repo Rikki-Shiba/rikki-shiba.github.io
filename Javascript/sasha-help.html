@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Expense Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #9b59b6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+
+        /* Date section - MAIN ELEMENT */
+        .date-section {
+            background-color: #9b59b6;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .date-section label {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .date-section input {
+            background: white;
+            font-size: 16px;
+        }
+
+        /* Items section - SECONDARY ELEMENT */
+        .items-section {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px dashed #ccc;
+        }
+
+        .items-section h3 {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .tax-info {
+            color: #999;
+            font-weight: normal;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #9b59b6;
+        }
+
+        /* Buttons */
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .add-button {
+            background-color: white;
+            color: #9b59b6;
+            border: 2px dashed #9b59b6;
+        }
+
+        .add-button:hover {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .finalize-button {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .finalize-button:hover {
+            background-color: #8e44ad;
+        }
+
+        .clear-button {
+            background-color: white;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        .clear-button:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .button-divider {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+        }
+
+        /* Additional items */
+        .extra-item {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px dashed #ccc;
+        }
+
+        /* Expense folders at bottom */
+        .expense-folders {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .folder-title {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #9b59b6;
+        }
+
+        .folder {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .folder:hover {
+            border-color: #9b59b6;
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+        }
+
+        .folder-header {
+            background-color: #9b59b6;
+            color: white;
+            padding: 25px 20px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .folder-header:hover {
+            background-color: #8e44ad;
+        }
+
+        .folder-date {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .folder-total {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .folder-content {
+            padding: 20px;
+            background-color: #fafafa;
+            display: none;
+        }
+
+        .folder.open {
+            grid-column: 1 / -1;
+        }
+
+        .folder.open .folder-content {
+            display: block;
+        }
+
+        /* Table */
+        .expense-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .expense-table th,
+        .expense-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .expense-table th {
+            background-color: #9b59b6;
+            color: white;
+            font-weight: bold;
+        }
+
+        .expense-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .total-row {
+            background-color: #e8e8e8;
+            font-weight: bold;
+        }
+
+        .grand-total-row {
+            background-color: #d4d4d4;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Empty message */
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .expense-folders {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .expense-folders {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Personal Expense Tracker</h1>
+        <p class="subtitle">Grade 4 Term 2 Project</p>
+        
+        <!-- DATE SECTION (MAIN) -->
+        <div class="date-section">
+            <label for="expenseDate">Select Expense Date</label>
+            <input type="date" id="expenseDate">
+        </div>
+        
+        <!-- ITEMS SECTION (SECONDARY) -->
+        <div class="items-section">
+            <h3>Add Items for this Date</h3>
+            
+            <div class="form-group">
+                <label>Item Name</label>
+                <input class="item-name" placeholder="e.g., McDonalds Cheeseburger">
+            </div>
+
+            <div class="form-group">
+                <label>Comments</label>
+                <input class="item-comment" placeholder="e.g., Was cold and not tasty">
+            </div>
+            
+            <div class="form-group">
+                <label>Item Cost (¥) <span class="tax-info" id="tax0">Estimated Tax: ¥0.00</span></label>
+                <input type="number" class="item-cost" placeholder="e.g., 350" step="0.01" oninput="showTax(this, 'tax0')">
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <button onclick="addItem()" class="add-button">+ Add Another Item</button>
+        
+        <div class="button-divider">
+            <button onclick="saveExpenses()" class="finalize-button">✓ Finalize Expense(s)</button>
+            <button onclick="clearAll()" class="clear-button">Clear All Saved Data</button>
+        </div>
+
+        <!-- EXPENSE FOLDERS -->
+        <div class="expense-folders" id="folders">
+            <div class="empty-message">
+                <div class="empty-icon"></div>
+                <div>No expenses recorded yet. Start adding your expenses above!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store all expenses
+        var allExpenses = {};
+        var itemNumber = 1;
+
+        // Load saved data when page opens
+        window.onload = function() {
+            var saved = localStorage.getItem('expenses');
+            if (saved) {
+                allExpenses = JSON.parse(saved);
+                showFolders();
+            }
+        };
+
+        // Show tax estimate
+        function showTax(input, taxId) {
+            var cost = Number(input.value) || 0;
+            var tax = cost * (10 / 110);
+            document.getElementById(taxId).textContent = 'Estimated Tax: ¥' + tax.toFixed(2);
+        }
+
+        // Add another item
+        function addItem() {
+            var itemsSection = document.querySelector('.items-section');
+            var taxId = 'tax' + itemNumber;
+            itemNumber = itemNumber + 1;
+            
+            var newItem = document.createElement('div');
+            newItem.className = 'extra-item';
+            newItem.innerHTML = 
+                '<div class="form-group">' +
+                    '<label>Item Name</label>' +
+                    '<input class="item-name" placeholder="e.g., Starbucks Coffee">' +
+                '</div>' +
+                '<div class="form-group">' +
+                    '<label>Comments</label>' +
+                    '<input class="item-comment" placeholder="e.g., Large latte">' +
+                '</div>' +
+                '<div class="form-group">' +
+                    '<label>Item Cost (¥) <span class="tax-info" id="' + taxId + '">Estimated Tax: ¥0.00</span></label>' +
+                    '<input type="number" class="item-cost" placeholder="e.g., 350" step="0.01" oninput="showTax(this, \'' + taxId + '\')">' +
+                '</div>';
+            
+            var addButton = document.querySelector('.add-button');
+            itemsSection.parentNode.insertBefore(newItem, addButton);
+        }
+
+        // Save expenses
+        function saveExpenses() {
+            var date = document.getElementById('expenseDate').value;
+            
+            if (!date) {
+                alert('Please select a date!');
+                return;
+            }
+            
+            var names = document.querySelectorAll('.item-name');
+            var comments = document.querySelectorAll('.item-comment');
+            var costs = document.querySelectorAll('.item-cost');
+            
+            var items = [];
+            
+            for (var i = 0; i < names.length; i++) {
+                if (names[i].value && costs[i].value) {
+                    items.push({
+                        name: names[i].value,
+                        comment: comments[i].value,
+                        cost: Number(costs[i].value)
+                    });
+                }
+            }
+            
+            if (items.length === 0) {
+                alert('Please add at least one item!');
+                return;
+            }
+            
+            if (allExpenses[date]) {
+                allExpenses[date] = allExpenses[date].concat(items);
+            } else {
+                allExpenses[date] = items;
+            }
+            
+            localStorage.setItem('expenses', JSON.stringify(allExpenses));
+            showFolders();
+            clearForm();
+        }
+
+        // Show all folders
+        function showFolders() {
+            var foldersDiv = document.getElementById('folders');
+            foldersDiv.innerHTML = '';
+            
+            var dateCount = 0;
+            for (var date in allExpenses) {
+                dateCount = dateCount + 1;
+            }
+            
+            if (dateCount === 0) {
+                foldersDiv.innerHTML = 
+                    '<div class="empty-message">' +
+                        '<div class="empty-icon"></div>' +
+                        '<div>No expenses recorded yet. Start adding your expenses above!</div>' +
+                    '</div>';
+                return;
+            }
+            
+            var title = document.createElement('h2');
+            title.className = 'folder-title';
+            title.textContent = '📁 Your Expense Records';
+            foldersDiv.appendChild(title);
+            
+            for (var date in allExpenses) {
+                var total = 0;
+                for (var i = 0; i < allExpenses[date].length; i++) {
+                    total = total + allExpenses[date][i].cost;
+                }
+                
+                var folder = document.createElement('div');
+                folder.className = 'folder';
+                folder.id = 'folder-' + date;
+                
+                var header = document.createElement('div');
+                header.className = 'folder-header';
+                header.innerHTML = 
+                    '<span class="folder-date">📅 ' + makeNiceDate(date) + '</span>' +
+                    '<span class="folder-total">¥' + total.toFixed(2) + '</span>';
+                header.onclick = function() {
+                    toggleFolder(this.parentElement.id);
+                };
+                
+                var content = document.createElement('div');
+                content.className = 'folder-content';
+                content.innerHTML = makeTable(date);
+                
+                folder.appendChild(header);
+                folder.appendChild(content);
+                foldersDiv.appendChild(folder);
+            }
+        }
+
+        // Make nice date format
+        function makeNiceDate(dateStr) {
+            var date = new Date(dateStr + 'T00:00:00');
+            var months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                         'July', 'August', 'September', 'October', 'November', 'December'];
+            return months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
+        }
+
+        // Make table HTML
+        function makeTable(date) {
+            var items = allExpenses[date];
+            var total = 0;
+            
+            var html = '<table class="expense-table"><thead><tr>' +
+                      '<th>Item Name</th><th>Comment</th><th>Price (¥)</th><th>Tax (10%)</th>' +
+                      '</tr></thead><tbody>';
+            
+            for (var i = 0; i < items.length; i++) {
+                var tax = items[i].cost * (10 / 110);
+                total = total + items[i].cost;
+                
+                html = html + '<tr>' +
+                      '<td><strong>' + items[i].name + '</strong></td>' +
+                      '<td>' + (items[i].comment || '-') + '</td>' +
+                      '<td>¥' + items[i].cost.toFixed(2) + '</td>' +
+                      '<td>¥' + tax.toFixed(2) + '</td>' +
+                      '</tr>';
+            }
+            
+            var totalTax = total * (10 / 110);
+            
+            html = html + 
+                  '<tr class="total-row">' +
+                      '<td colspan="2"><strong>Subtotals</strong></td>' +
+                      '<td><strong>¥' + total.toFixed(2) + '</strong></td>' +
+                      '<td><strong>¥' + totalTax.toFixed(2) + '</strong></td>' +
+                  '</tr>' +
+                  '<tr class="grand-total-row">' +
+                      '<td colspan="3"><strong>GRAND TOTAL (tax included)</strong></td>' +
+                      '<td><strong>¥' + total.toFixed(2) + '</strong></td>' +
+                  '</tr>' +
+                  '</tbody></table>';
+            
+            return html;
+        }
+
+        // Toggle folder open/close
+        function toggleFolder(folderId) {
+            var allFolders = document.querySelectorAll('.folder');
+            
+            for (var i = 0; i < allFolders.length; i++) {
+                if (allFolders[i].id !== folderId) {
+                    allFolders[i].classList.remove('open');
+                }
+            }
+            
+            var clickedFolder = document.getElementById(folderId);
+            
+            if (clickedFolder.classList.contains('open')) {
+                clickedFolder.classList.remove('open');
+            } else {
+                clickedFolder.classList.add('open');
+            }
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('expenseDate').value = '';
+            
+            var names = document.querySelectorAll('.item-name');
+            var comments = document.querySelectorAll('.item-comment');
+            var costs = document.querySelectorAll('.item-cost');
+            
+            for (var i = 0; i < names.length; i++) {
+                names[i].value = '';
+                comments[i].value = '';
+                costs[i].value = '';
+            }
+            
+            document.getElementById('tax0').textContent = 'Estimated Tax: ¥0.00';
+            
+            var extras = document.querySelectorAll('.extra-item');
+            for (var i = 0; i < extras.length; i++) {
+                extras[i].remove();
+            }
+            
+            itemNumber = 1;
+        }
+
+        // Clear all data
+        function clearAll() {
+            var confirmDelete = confirm('Are you sure you want to delete ALL expense data? This cannot be undone!');
+            
+            if (confirmDelete) {
+                allExpenses = {};
+                localStorage.removeItem('expenses');
+                showFolders();
+                alert('All data has been cleared!');
+            }
+        }
+    </script>
+</body>
+</html>

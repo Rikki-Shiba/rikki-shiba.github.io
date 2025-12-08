@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event Listener Examples</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Event Listener Practice</h1>
+    
+    <!-- Click Example -->
+    <h2>Click Event</h2>
+    <button id="clickButton">Click Me!</button>
+    <p id="clickMessage"></p>
+    
+    <!-- Input Example -->
+    <h2>Input Event</h2>
+    <input type="text" id="textInput" placeholder="Type something...">
+    <p id="inputMessage"></p>
+    
+    <!-- Mouse Enter Example -->
+    <h2>Mouse Enter Event</h2>
+    <div id="hoverBox" style="width: 150px; 
+        height: 100px; 
+        background-color: lightblue; 
+        border: 1px solid black; 
+        text-align: center; 
+        line-height: 100px;">
+        Hover Here!
+    </div>
+    
+    <!-- Submit Example -->
+    <h2>Submit Event</h2>
+    <form id="testForm">
+        <input type="text" id="nameField" placeholder="Your name" required>
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <p id="formMessage"></p>
+
+    <script>
+        
+        // Click Event: Method 1 (Using Variables)
+        const btnClick = document.querySelector(`#clickButton`);
+        btnClick.addEventListener('click', function(){
+            const outClick = document.querySelector(`#clickMessage`);
+            outClick.textContent = "You clicked the button!"; // using textContent
+        });
+
+        // Click Event: Method 2 (No Variables)
+        document.querySelector(`#clickButton`).addEventListener('click', function(){
+            document.querySelector(`#clickMessage`).innerHTML = "You Clicked the Button!"; // using innerHTML
+        });
+
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>Shape Merge — Canvas Game</title>
+<style>
+  html,body { height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; background:#111; color:#eee; -webkit-tap-highlight-color:transparent; }
+  #wrap { display:flex; flex-direction:column; height:100vh; align-items:center; justify-content:flex-start; gap:8px; padding:8px; box-sizing:border-box; }
+  #hud { width:100%; max-width:640px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  #score { font-size:18px; }
+  button { background:#1f6feb; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:600; cursor:pointer; }
+  #game { border-radius:10px; background:linear-gradient(180deg,#0b1220,#071027); touch-action:none; } /* prevent double-tap zoom / default scrolling when interacting */
+  .note { font-size:12px; opacity:0.8; max-width:640px; text-align:left; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="hud">
+    <div id="score">Score: 0</div>
+    <div>
+      <button id="restart">Restart</button>
+    </div>
+  </div>
+  <canvas id="game" width="600" height="800"></canvas>
+  <div class="note">Drag a shape onto another shape of the <strong>same color & same shape</strong> to destroy them. Try on your phone!</div>
+</div>
+
+<script>
+/* ----- Config ----- */
+const CONFIG = {
+  baseWidth: 600,
+  baseHeight: 800,
+  shapeCount: 18,
+  particleCount: 16,
+  sizes: [20, 26, 34],
+  colors: [ "#FF6B6B","#FFD166","#06D6A0","#4D96FF","#C084FC","#FF9F1C" ],
+  wrapOnExit: true, // shapes wrap when leaving canvas
+  requireSameShapeAndColor: true // matching rule
+};
+
+/* ----- Setup canvas with DPR scaling ----- */
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvasToDisplay() {
+  // fit canvas to container width while preserving aspect ratio
+  const maxW = Math.min(window.innerWidth - 16, 640);
+  const scale = Math.min(1, maxW / CONFIG.baseWidth);
+  const displayW = Math.floor(CONFIG.baseWidth * scale);
+  const displayH = Math.floor(CONFIG.baseHeight * scale);
+  canvas.style.width = displayW + "px";
+  canvas.style.height = displayH + "px";
+
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(displayW * dpr);
+  canvas.height = Math.floor(displayH * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // scale drawing to CSS pixels
+}
+window.addEventListener('resize', resizeCanvasToDisplay);
+resizeCanvasToDisplay();
+
+/* ----- Utility ----- */
+function rand(min,max){ return Math.random()*(max-min)+min; }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+/* ----- Shape class ----- */
+class Shape {
+  constructor(x,y,size,color,type){
+    this.x = x; this.y = y;
+    this.size = size;
+    this.color = color;
+    this.type = type; // "circle", "square", "triangle"
+    this.dx = rand(-1.4,1.4);
+    this.dy = rand(-1.2,1.2);
+    this.isSelected = false;
+  }
+  draw(ctx){
+    ctx.save();
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    if(this.type === "circle"){
+      ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+      ctx.fill();
+    } else if(this.type === "square"){
+      ctx.fillRect(this.x - this.size, this.y - this.size, this.size*2, this.size*2);
+    } else if(this.type === "triangle"){
+      ctx.moveTo(this.x, this.y - this.size);
+      ctx.lineTo(this.x - this.size, this.y + this.size);
+      ctx.lineTo(this.x + this.size, this.y + this.size);
+      ctx.closePath();
+      ctx.fill();
+    }
+    if(this.isSelected){
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(255,255,255,0.9)";
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  update(boundsW,boundsH){
+    if(!this.isSelected){ // while selected, movement is controlled by touch/mouse
+      this.x += this.dx;
+      this.y += this.dy;
+    }
+    if(CONFIG.wrapOnExit){
+      if(this.x < -this.size) this.x = boundsW + this.size;
+      if(this.x > boundsW + this.size) this.x = -this.size;
+      if(this.y < -this.size) this.y = boundsH + this.size;
+      if(this.y > boundsH + this.size) this.y = -this.size;
+    } else {
+      if(this.x < this.size) { this.x = this.size; this.dx *= -1; }
+      if(this.x > boundsW - this.size) { this.x = boundsW - this.size; this.dx *= -1; }
+      if(this.y < this.size) { this.y = this.size; this.dy *= -1; }
+      if(this.y > boundsH - this.size) { this.y = boundsH - this.size; this.dy *= -1; }
+    }
+  }
+  // approximate collision radius
+  radius(){
+    return this.size * (this.type === 'square' ? 1.4 : 1);
+  }
+}
+
+/* ----- Particles ----- */
+class Particle {
+  constructor(x,y,color){
+    this.x = x; this.y = y;
+    this.dx = rand(-3.5,3.5);
+    this.dy = rand(-3.5,3.5);
+    this.life = rand(22,40);
+    this.maxLife = this.life;
+    this.color = color;
+    this.size = rand(2,4);
+  }
+  update(){
+    this.x += this.dx;
+    this.y += this.dy;
+    this.dy += 0.05; // slight gravity
+    this.life--;
+  }
+  draw(ctx){
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, this.life/this.maxLife);
+    ctx.beginPath();
+    ctx.fillStyle = this.color;
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+/* ----- Game state ----- */
+let shapes = [];
+let particles = [];
+let score = 0;
+const scoreEl = document.getElementById('score');
+const restartBtn = document.getElementById('restart');
+
+function spawnShapes(count){
+  shapes = [];
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  const types = ["circle","square","triangle"];
+  for(let i=0;i<count;i++){
+    const size = pick(CONFIG.sizes);
+    const s = new Shape(
+      rand(size, w - size),
+      rand(size, h - size),
+      size,
+      pick(CONFIG.colors),
+      pick(types)
+    );
+    shapes.push(s);
+  }
+}
+
+/* ----- Input handling (touch + mouse) ----- */
+let activeShape = null;
+let pointerOffset = {x:0,y:0};
+let isPointerDown = false;
+
+function getPointerPos(evt){
+  const rect = canvas.getBoundingClientRect();
+  let clientX, clientY;
+  if(evt.touches && evt.touches.length){
+    clientX = evt.touches[0].clientX;
+    clientY = evt.touches[0].clientY;
+  } else if(evt.changedTouches && evt.changedTouches.length){
+    clientX = evt.changedTouches[0].clientX;
+    clientY = evt.changedTouches[0].clientY;
+  } else {
+    clientX = evt.clientX;
+    clientY = evt.clientY;
+  }
+  return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+function findShapeAt(x,y){
+  // find top-most shape whose approximate radius covers pointer
+  for(let i=shapes.length-1;i>=0;i--){
+    const s = shapes[i];
+    const d = Math.hypot(s.x - x, s.y - y);
+    if(d <= s.radius()) return s;
+  }
+  return null;
+}
+
+function pointerDown(evt){
+  evt.preventDefault();
+  isPointerDown = true;
+  const p = getPointerPos(evt);
+  const s = findShapeAt(p.x, p.y);
+  if(s){
+    activeShape = s;
+    activeShape.isSelected = true;
+    pointerOffset.x = p.x - s.x;
+    pointerOffset.y = p.y - s.y;
+    // bring selected to top
+    const idx = shapes.indexOf(s);
+    if(idx > -1){ shapes.splice(idx,1); shapes.push(s); }
+  }
+}
+function pointerMove(evt){
+  if(!isPointerDown) return;
+  evt.preventDefault();
+  const p = getPointerPos(evt);
+  if(activeShape){
+    activeShape.x = p.x - pointerOffset.x;
+    activeShape.y = p.y - pointerOffset.y;
+  }
+}
+function pointerUp(evt){
+  if(!isPointerDown) return;
+  isPointerDown = false;
+  // on release, check if activeShape overlaps another and matches
+  if(activeShape){
+    activeShape.isSelected = false;
+    const target = shapes.find(s => s !== activeShape && Math.hypot(s.x - activeShape.x, s.y - activeShape.y) < (s.radius() + activeShape.radius())*0.9);
+    if(target){
+      // match logic:
+      const sameColor = (target.color === activeShape.color);
+      const sameType = (target.type === activeShape.type);
+      const shouldDestroy = CONFIG.requireSameShapeAndColor ? (sameColor && sameType) : (sameColor || sameType);
+      if(shouldDestroy){
+        destroyPair(activeShape, target);
+      }
+    }
+  }
+  activeShape = null;
+}
+
+canvas.addEventListener('touchstart', pointerDown, {passive:false});
+canvas.addEventListener('touchmove', pointerMove, {passive:false});
+canvas.addEventListener('touchend', pointerUp, {passive:false});
+canvas.addEventListener('mousedown', pointerDown);
+window.addEventListener('mousemove', pointerMove);
+window.addEventListener('mouseup', pointerUp);
+
+/* ----- Destroy + particles + score ----- */
+function destroyPair(a,b){
+  // spawn particles at average position
+  const cx = (a.x + b.x)/2;
+  const cy = (a.y + b.y)/2;
+  for(let i=0;i<CONFIG.particleCount;i++){
+    particles.push(new Particle(cx, cy, pick([a.color, b.color])));
+  }
+  // remove both shapes (remove by identity)
+  shapes = shapes.filter(s => s !== a && s !== b);
+  score += 10;
+  updateScore();
+  // optional: respawn new shapes to keep game lively (small chance)
+  if(Math.random() < 0.6) spawnOne();
+}
+
+function spawnOne(){
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  const types = ["circle","square","triangle"];
+  shapes.push(new Shape(
+    rand(30, w-30), rand(30, h-30), pick(CONFIG.sizes), pick(CONFIG.colors), pick(types)
+  ));
+}
+
+function updateScore(){
+  scoreEl.textContent = "Score: " + score;
+}
+
+/* ----- Game loop ----- */
+let lastTime = 0;
+function loop(t){
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  ctx.clearRect(0,0,w,h);
+
+  // update & draw shapes
+  for(let s of shapes) s.update(w,h);
+  for(let s of shapes) s.draw(ctx);
+
+  // update particles
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.update();
+    if(p.life <= 0) particles.splice(i,1);
+    else p.draw(ctx);
+  }
+
+  // draw instructions when empty
+  if(shapes.length === 0){
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.font = "20px system-ui, -apple-system, Roboto, Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("All shapes cleared! Press Restart", w/2, h/2);
+    ctx.restore();
+  }
+
+  requestAnimationFrame(loop);
+}
+
+/* ----- Restart and init ----- */
+function startGame(){
+  score = 0;
+  updateScore();
+  spawnShapes(CONFIG.shapeCount);
+}
+restartBtn.addEventListener('click', ()=> {
+  startGame();
+});
+
+startGame();
+requestAnimationFrame(loop);
+
+/* ----- Prevent page scrolling while touching the canvas on mobile ----- */
+document.body.addEventListener('touchmove', function(e){
+  if(e.target === canvas) e.preventDefault();
+}, {passive:false});
+
+</script>
+</body>
+</html>

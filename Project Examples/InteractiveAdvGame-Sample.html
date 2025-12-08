@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Quest for the Lost Treasure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .stats-bar {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #667eea;
+        }
+
+        .story-box {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            min-height: 150px;
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #333;
+            border-left: 4px solid #667eea;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .choice-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: left;
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .choice-btn:active {
+            transform: translateY(0);
+        }
+
+        .inventory {
+            background: #fff9e6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #ffd700;
+        }
+
+        .inventory-title {
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+
+        .inventory-items {
+            color: #333;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .restart-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .restart-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>The Quest for the Lost Treasure</h1>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-label">Health:</span> 
+                <span id="health">100</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Gold:</span> 
+                <span id="gold">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Courage:</span> 
+                <span id="courage">50</span>
+            </div>
+        </div>
+
+        <div class="story-box" id="story-text"></div>
+        
+        <div class="choices" id="choices"></div>
+
+        <div class="inventory">
+            <div class="inventory-title">🎒 Inventory:</div>
+            <div class="inventory-items" id="inventory">Empty</div>
+        </div>
+    </div>
+
+    <script>
+        /*
+        =======================================================================
+        INTERACTIVE ADVENTURE GAME
+        =======================================================================
+        
+        PROJECT IDEA #7: Build an interactive story game with branching paths!
+        
+        STEP 1: CREATE PLAYER STATS
+        - Create a playerStats object to track things like:
+          * health (maybe start at 100?)
+          * gold (start at 0)
+          * any other stats you want (strength, magic, luck, etc.)
+          * inventory array (to hold items the player collects)
+        
+        STEP 2: CREATE YOUR STORY DATA
+        - Create a storyData object that contains all your story scenes
+        - Each scene should be a property (like start, forest, cave, etc.)
+        - Each scene needs:
+          * text: the story text to display
+          * choices: an array of choice objects
+        - Each choice object should have:
+          * text: what the button says
+          * next: which scene to go to next
+          * Optional: health, gold, or item changes
+        
+        Example structure:
+        const storyData = {
+            start: {
+                text: "Your story text here...",
+                choices: [
+                    { text: "Choice 1", next: "scene2", gold: 10 },
+                    { text: "Choice 2", next: "scene3", health: -20 }
+                ]
+            },
+            scene2: {
+                text: "Next part of story...",
+                choices: [ ... ]
+            }
+            // Add more scenes!
+        };
+        
+        STEP 3: CREATE AN updateStats() FUNCTION
+        - This function should update the HTML to show current stats
+        - Use document.getElementById() to get the stat elements
+        - Update their textContent with current values
+        - Don't forget to handle the inventory display!
+        
+        STEP 4: CREATE A showStory() FUNCTION
+        - This is the main function that displays story scenes
+        - It should take a parameter: which scene to show
+        - Get the scene from storyData
+        - Display the story text in the story-text div
+        - Clear the choices div
+        - Check if it's an ending (you could add an "ending: true" property)
+        - If ending, show game over message and restart button
+        - If not ending, loop through choices and create buttons
+        - Each button needs an onclick function that:
+          * Updates stats based on choice properties (if, else if statements!)
+          * Adds items to inventory if the choice has an item
+          * Calls updateStats()
+          * Calls showStory() with the next scene
+        
+        STEP 5: CREATE A restartGame() FUNCTION
+        - Reset playerStats to starting values
+        - Call updateStats() to refresh display
+        - Call showStory("start") to begin again
+        
+        STEP 6: START THE GAME
+        - Call updateStats() once at the beginning
+        - Call showStory("start") to show the first scene
+        
+        TIPS:
+        - Plan your story on paper first! Draw a flowchart
+        - Start simple with 3-4 scenes, then add more
+        - Test frequently as you build
+        - Use console.log() to debug
+        - Make sure every scene has a path forward or is an ending
+        - Be creative with your story and stats!
+        
+        =======================================================================
+        */
+        
+        // STEP 1: Create your playerStats object here
+        
+        
+        // STEP 2: Create your storyData object here
+        
+        
+        // STEP 3: Create your updateStats() function here
+        
+        
+        // STEP 4: Create your showStory() function here
+        
+        
+        // STEP 5: Create your restartGame() function here
+        
+        
+        // STEP 6: Start the game!
+        
+        
+    </script>
+</body>
+</html>

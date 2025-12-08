@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Quest for the Lost Treasure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .stats-bar {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            color: #667eea;
+        }
+
+        .story-box {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            min-height: 150px;
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #333;
+            border-left: 4px solid #667eea;
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .choice-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: left;
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .choice-btn:active {
+            transform: translateY(0);
+        }
+
+        .inventory {
+            background: #fff9e6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #ffd700;
+        }
+
+        .inventory-title {
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+
+        .inventory-items {
+            color: #333;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .restart-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .restart-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>The Quest for the Lost Treasure</h1>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-label">Health:</span> 
+                <span id="health">100</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Gold:</span> 
+                <span id="gold">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Courage:</span> 
+                <span id="courage">50</span>
+            </div>
+        </div>
+
+        <div class="story-box" id="story-text"></div>
+        
+        <div class="choices" id="choices"></div>
+
+        <div class="inventory">
+            <div class="inventory-title">Inventory:</div>
+            <div class="inventory-items" id="inventory">Empty</div>
+        </div>
+    </div>
+
+    <script>
+        // Game state - tracking player stats
+        let playerStats = {
+            health: 100,
+            gold: 0,
+            courage: 50,
+            inventory: []
+        };
+
+        // Story data using objects and arrays
+        const storyData = {
+            start: {
+                text: "You wake up in a mysterious forest. The morning sun filters through the ancient trees. You remember the legend of a lost treasure hidden somewhere in these woods. A worn map in your pocket shows two paths ahead.",
+                choices: [
+                    { text: "Take the dark path through the shadowy trees", next: "darkPath", courage: -10 },
+                    { text: "Follow the sunny path along the river", next: "sunnyPath", courage: 5 }
+                ]
+            },
+
+            darkPath: {
+                text: "The dark path is eerie and silent. Suddenly, you hear a growl. A wolf appears, blocking your way! You notice a stick on the ground nearby.",
+                choices: [
+                    { text: "Fight the wolf with the stick", next: "fightWolf", health: -30, courage: 10 },
+                    { text: "Try to befriend the wolf with food", next: "befriendWolf", item: "Loyal Wolf Companion" },
+                    { text: "Run back to the sunny path", next: "sunnyPath", courage: -15 }
+                ]
+            },
+
+            sunnyPath: {
+                text: "The sunny path is peaceful. You find a merchant's cart abandoned by the riverside. Inside, you see a sword and a healing potion.",
+                choices: [
+                    { text: "Take the sword", next: "takeSword", item: "Sharp Sword" },
+                    { text: "Take the healing potion", next: "takePotion", item: "Healing Potion", health: 20 },
+                    { text: "Take nothing and continue", next: "honest", gold: 50, courage: 10 }
+                ]
+            },
+
+            fightWolf: {
+                text: "You bravely fight the wolf with the stick! After a tough battle, the wolf retreats. You feel braver but wounded. You find a cave entrance behind where the wolf was standing.",
+                choices: [
+                    { text: "Enter the cave", next: "cave" },
+                    { text: "Rest and heal before exploring", next: "rest", health: 15 }
+                ]
+            },
+
+            befriendWolf: {
+                text: "You offer some food to the wolf. The wolf sniffs it, wags its tail, and becomes your loyal companion! Together, you discover a hidden cave entrance.",
+                choices: [
+                    { text: "Enter the cave with your wolf companion", next: "caveWithWolf" }
+                ]
+            },
+
+            takeSword: {
+                text: "You take the sword. It feels powerful in your hands. Suddenly, a bandit appears demanding payment for taking his goods!",
+                choices: [
+                    { text: "Fight the bandit with your new sword", next: "fightBandit", courage: 15 },
+                    { text: "Apologize and return the sword", next: "returnSword", gold: 30 }
+                ]
+            },
+
+            takePotion: {
+                text: "You take the healing potion and drink it. You feel refreshed! The merchant appears and thanks you for not taking his valuable sword. He gives you directions to the treasure.",
+                choices: [
+                    { text: "Follow the merchant's directions", next: "treasureRoom" }
+                ]
+            },
+
+            honest: {
+                text: "You decide to be honest and take nothing. The merchant appears from behind a tree, impressed by your integrity. He rewards you with gold and offers to guide you to the treasure!",
+                choices: [
+                    { text: "Accept his guidance", next: "treasureRoom" }
+                ]
+            },
+
+            rest: {
+                text: "You rest and bandage your wounds. Feeling better, you explore the area and find a map piece showing the way to the treasure cave.",
+                choices: [
+                    { text: "Follow the map to the cave", next: "cave" }
+                ]
+            },
+
+            cave: {
+                text: "Inside the cave, you see two tunnels. One has strange markings on the walls, the other has a faint golden glow coming from it.",
+                choices: [
+                    { text: "Take the tunnel with markings", next: "trapTunnel", health: -40 },
+                    { text: "Follow the golden glow", next: "treasureRoom" }
+                ]
+            },
+
+            caveWithWolf: {
+                text: "Your wolf companion leads you confidently through the cave, avoiding traps with its keen senses. You arrive at a massive treasure room!",
+                choices: [
+                    { text: "Examine the treasure", next: "bestEnding" }
+                ]
+            },
+
+            fightBandit: {
+                text: "With your new sword, you defeat the bandit! He drops a key before fleeing. The key has a symbol matching one you saw on your map.",
+                choices: [
+                    { text: "Use the key to find the treasure", next: "treasureRoom" }
+                ]
+            },
+
+            returnSword: {
+                text: "The bandit is surprised by your honesty. He reveals he's actually a treasure hunter who was testing people. He shares his treasure map with you!",
+                choices: [
+                    { text: "Follow his map", next: "treasureRoom" }
+                ]
+            },
+
+            trapTunnel: {
+                text: "The tunnel was a trap! Arrows shoot from the walls, injuring you badly. You manage to escape back to the cave entrance, wounded but alive.",
+                choices: [
+                    { text: "Try the other tunnel", next: "treasureRoom" }
+                ]
+            },
+
+            treasureRoom: {
+                text: "You enter a magnificent treasure room filled with gold and jewels! But wait - a guardian statue comes to life! 'Only the worthy may claim the treasure,' it booms.",
+                choices: [
+                    { text: "Show your courage and take the treasure", next: "courageEnding" },
+                    { text: "Take only what you need and leave", next: "wisdomEnding" },
+                    { text: "Bow respectfully and ask permission", next: "goodEnding" }
+                ]
+            },
+
+            bestEnding: {
+                text: "With your loyal wolf companion by your side, the guardian recognizes true friendship and bravery. It grants you the entire treasure and blesses your journey! You become a legendary hero.",
+                choices: [],
+                ending: true
+            },
+
+            courageEnding: {
+                text: "The guardian tests your courage in battle. You fight bravely and prove yourself worthy. You claim the treasure but are wounded in the battle. Still, you return home victorious!",
+                choices: [],
+                ending: true
+            },
+
+            wisdomEnding: {
+                text: "The guardian smiles at your wisdom and humility. 'You have passed the true test,' it says, granting you a modest treasure and a magical amulet of protection. You return home with both wealth and wisdom.",
+                choices: [],
+                ending: true
+            },
+
+            goodEnding: {
+                text: "The guardian is impressed by your respect and humility. It grants you access to the treasure and teaches you ancient wisdom. You return home wealthy and wise, becoming a respected leader.",
+                choices: [],
+                ending: true
+            }
+        };
+
+        // Helper function to update stats display
+        function updateStats() {
+            document.getElementById("health").textContent = playerStats.health;
+            document.getElementById("gold").textContent = playerStats.gold;
+            document.getElementById("courage").textContent = playerStats.courage;
+            
+            // Update inventory display
+            const inventoryDiv = document.getElementById("inventory");
+            if (playerStats.inventory.length === 0) {
+                inventoryDiv.textContent = "Empty";
+            } else {
+                inventoryDiv.textContent = playerStats.inventory.join(", ");
+            }
+        }
+
+        // Main function to display story
+        function showStory(storyKey) {
+            const story = storyData[storyKey];
+            
+            // Display story text
+            document.getElementById("story-text").textContent = story.text;
+            
+            // Clear and display choices
+            const choicesDiv = document.getElementById("choices");
+            choicesDiv.innerHTML = "";
+
+            // Check if this is an ending
+            if (story.ending) {
+                const gameOverDiv = document.createElement("div");
+                gameOverDiv.className = "game-over";
+                gameOverDiv.innerHTML = `
+                    <h2>Game Over!</h2>
+                    <p>Final Stats - Health: ${playerStats.health} | Gold: ${playerStats.gold} | Courage: ${playerStats.courage}</p>
+                    <button class="restart-btn" onclick="restartGame()">Play Again</button>
+                `;
+                choicesDiv.appendChild(gameOverDiv);
+                return;
+            }
+
+            // Create choice buttons
+            story.choices.forEach((choice) => {
+                const button = document.createElement("button");
+                button.className = "choice-btn";
+                button.textContent = choice.text;
+                
+                button.onclick = function() {
+                    // Apply stat changes
+                    if (choice.health) {
+                        playerStats.health += choice.health;
+                        if (playerStats.health < 0) playerStats.health = 0;
+                        if (playerStats.health > 100) playerStats.health = 100;
+                    }
+                    if (choice.gold) {
+                        playerStats.gold += choice.gold;
+                    }
+                    if (choice.courage) {
+                        playerStats.courage += choice.courage;
+                        if (playerStats.courage < 0) playerStats.courage = 0;
+                    }
+                    if (choice.item) {
+                        playerStats.inventory.push(choice.item);
+                    }
+                    
+                    updateStats();
+                    showStory(choice.next);
+                };
+                
+                choicesDiv.appendChild(button);
+            });
+        }
+
+        // Restart game function
+        function restartGame() {
+            playerStats = {
+                health: 100,
+                gold: 0,
+                courage: 50,
+                inventory: []
+            };
+            updateStats();
+            showStory("start");
+        }
+
+        // Start the game
+        updateStats();
+        showStory("start");
+    </script>
+</body>
+</html>

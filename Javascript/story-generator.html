@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+    <title>Random Story Generator</title>
+</head>
+<body style="text-align: center">
+    <h1> Random Story Generator</h1>
+
+    <span id="story" ></span>
+
+    <script>
+        function getRandomElement(array) {
+            console.log("Randomizing");
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function generateStory() {
+            const heroes = ["a brave knight", "a clever wizard", "a sneaky ninja"];
+            const villains = ["an evil dragon", "a wicked witch", "a robot army"];
+            const places = ["a haunted castle", "a mysterious forest", "a space station", "a prison cell"];
+            const actions = ["swinging", "shooting", "stabbing", "bashing", "punching"];
+            const weapons = ["fist", "sword", "lazer gun", "rocket launcher", "axe", "chalk"];
+            const treasures = ["smelly sock", "a shiny coin", "homework", "baby oil", "chalk"];
+
+            // The following day, you meet ${companion}, who is ${companion_description}
+            const companions = ["a bard", "a turtle", "a student", "pikachu", "an empty can"];
+            const companion_description = ["big and strong", "not eloquent", "adventurous", "stupid"];
+
+            const hero = getRandomElement(heroes);
+            const villain = getRandomElement(villains);
+            const place = getRandomElement(places);
+
+            return `Once upon a time, ${hero} had to defeat ${villain} in ${place}.`;
+        }
+
+        // Display the story
+        document.getElementById("story").innerHTML = generateStory();
+
+    </script>
+</body>
+</html>

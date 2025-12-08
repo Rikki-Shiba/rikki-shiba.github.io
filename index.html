@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DOM Demo Page</title>
+</head>
+<body>
+    <h1 id="title">Welcome</h1>
+    <p id="message">This will change</p>
+    <button id="changeBtn">Click Me!</button> 
+
+    <script>
+        // Get Our Elements
+        let title = document.getElementById("title");
+        let message = document.getElementById("message");
+        let button = document.getElementById("changeBtn");
+
+        // Page Load Event
+        document.addEventListener('load', function(event){
+            title.textContent("Content Loaded!");
+            title.style.color = "blue";
+        });
+
+        // Button Event Listener
+        button.addEventListener('click', function(event) {
+            // Change text content
+            title.textContent = "New Title!";
+            message.innerHTML = "<strong>Bold Message!</strong>";
+
+            // Change styles
+            title.style.color = "blue";
+            message.style.fontSize = "20px";
+        });
+    </script>
+</body>
+</html>

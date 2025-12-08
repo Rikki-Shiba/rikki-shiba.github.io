@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Drawing Board</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: inline-block;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-btn {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 3px #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #333;
+            color: white;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        #canvas {
+            display: inline-grid;
+            gap: 1px;
+            background: #ccc;
+            border: 2px solid #333;
+        }
+
+        .cell {
+            width: 20px;
+            height: 20px;
+            background: white;
+            cursor: crosshair;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Pixel Drawing Board</h1>
+        
+        <div class="controls">
+            <div class="color-btn active" style="background: black;" data-color="#000000"></div>
+            <div class="color-btn" style="background: red;" data-color="#ff0000"></div>
+            <div class="color-btn" style="background: blue;" data-color="#0000ff"></div>
+            <div class="color-btn" style="background: green;" data-color="#00ff00"></div>
+            <div class="color-btn" style="background: yellow;" data-color="#ffff00"></div>
+            <div class="color-btn" style="background: purple;" data-color="#800080"></div>
+            <div class="color-btn" style="background: orange;" data-color="#ffa500"></div>
+            <div class="color-btn" style="background: pink;" data-color="#ffc0cb"></div>
+            <div class="color-btn" style="background: white;" data-color="#ffffff"></div>
+        </div>
+
+        <div class="controls">
+            <button onclick="clearBoard()">Clear Board</button> <!-- load a Javascript function directly -->
+            <button onclick="saveDrawing()">Save Drawing</button>
+            <button onclick="loadDrawing()">Load Drawing</button>
+        </div>
+
+        <div class="canvas-wrapper">
+            <div id="canvas"></div>
+        </div>
+        
+        <div class="status" id="status">Click cells to draw!</div>
+    </div>
+
+    <script>
+        const GRID_SIZE = 16;
+        let currentColor = '#000000';
+        let grid = [];
+
+        // Initialize the grid array and DOM
+        function initGrid() {
+            const canvas = document.getElementById('canvas');
+            canvas.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 20px)`;
+            canvas.innerHTML = '';
+            grid = [];
+
+            for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+                grid[i] = '#ffffff';
+                
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.index = i;
+                cell.style.background = '#ffffff';
+                
+                cell.addEventListener('click', function() {
+                    paintCell(this);
+                });
+                
+                canvas.appendChild(cell);
+            }
+        }
+
+        // Paint a cell with current color
+        function paintCell(cell) {
+            const index = parseInt(cell.dataset.index);
+            
+            cell.style.background = currentColor;
+            grid[index] = currentColor;
+        }
+
+        // Color button selection
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentColor = this.dataset.color;
+            });
+        });
+
+        // Clear the board
+        function clearBoard() {
+            if (confirm('Are you sure you want to clear the board?')) {
+                initGrid();
+                showStatus('Board cleared!');
+            }
+        }
+
+        // Save drawing to localStorage
+        function saveDrawing() {
+            const drawingData = {
+                grid: grid,
+                size: GRID_SIZE,
+                timestamp: new Date().toISOString()
+            };
+            
+            const jsonData = JSON.stringify(drawingData);
+            localStorage.setItem('pixelDrawing', jsonData);
+            showStatus('Drawing saved successfully!');
+        }
+
+        // Load drawing from localStorage
+        function loadDrawing() {
+            const savedData = localStorage.getItem('pixelDrawing');
+            
+            if (!savedData) {
+                showStatus('No saved drawing found!');
+                return;
+            }
+
+            try {
+                const drawingData = JSON.parse(savedData);
+                
+                if (drawingData.size !== GRID_SIZE) {
+                    showStatus('Saved drawing has different grid size!');
+                    return;
+                }
+
+                grid = drawingData.grid;
+                
+                // Update the DOM to reflect loaded data
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    const index = parseInt(cell.dataset.index);
+                    cell.style.background = grid[index];
+                });
+                
+                showStatus('Drawing loaded successfully!');
+            } catch (e) {
+                showStatus('Error loading drawing!');
+                console.error(e);
+            }
+        }
+
+        // Show status message
+        function showStatus(message) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            setTimeout(() => {
+                status.textContent = 'Click cells to draw!';
+            }, 2000);
+        }
+
+        // Initialize on page load
+        initGrid();
+    </script>
+</body>
+</html>

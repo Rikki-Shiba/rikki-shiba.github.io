@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Expense Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .input-section, .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .total {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .expense-item:hover {
+            background: #f9f9f9;
+        }
+
+        .expense-info {
+            flex: 1;
+        }
+
+        .expense-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .expense-category {
+            font-size: 12px;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .expense-amount {
+            font-size: 18px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            width: auto;
+            padding: 5px 15px;
+            background: #e74c3c;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Personal Expense Tracker</h1>
+        
+        <div class="input-section">
+            <div class="form-group">
+                <label for="expenseName">Expense Name</label>
+                <input type="text" id="expenseName" placeholder="e.g., Lunch, Taxi, Groceries">
+            </div>
+            
+            <div class="form-group">
+                <label for="expenseAmount">Amount (¥)</label>
+                <input type="number" id="expenseAmount" placeholder="0" step="1" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="expenseCategory">Category</label>
+                <select id="expenseCategory">
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <button onclick="addExpense()">Add Expense</button>
+        </div>
+
+        <div class="filter-section">
+            <div class="form-group">
+                <label for="filterCategory">Filter by Category</label>
+                <select id="filterCategory" onchange="displayExpenses()">
+                    <option value="all">All Categories</option>
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="total" id="totalAmount">Total: ¥0</div>
+
+        <div class="expenses-list" id="expensesList"></div>
+    </div>
+
+    <script>
+        // Array to store expenses
+        let expenses = [];
+
+        // Load expenses from JSON when page loads
+        function loadExpenses() {
+            const savedExpenses = JSON.parse(localStorage.getItem('expenses'));
+            if (savedExpenses) {
+                expenses = savedExpenses;
+            }
+            displayExpenses();
+        }
+
+        // Save expenses to JSON
+        function saveExpenses() {
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+        }
+
+        // Add new expense
+        function addExpense() {
+            const name = document.getElementById('expenseName').value.trim();
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const category = document.getElementById('expenseCategory').value;
+
+            if (!name || !amount || amount <= 0) {
+                alert('Please enter a valid expense name and amount!');
+                return;
+            }
+
+            const expense = {
+                id: Date.now(),
+                name: name,
+                amount: amount,
+                category: category
+            };
+
+            expenses.push(expense);
+            saveExpenses();
+            
+            // Clear inputs
+            document.getElementById('expenseName').value = '';
+            document.getElementById('expenseAmount').value = '';
+            
+            displayExpenses();
+        }
+
+        // Delete expense
+        function deleteExpense(id) {
+            expenses = expenses.filter(exp => exp.id !== id);
+            saveExpenses();
+            displayExpenses();
+        }
+
+        // Calculate total using loop
+        function calculateTotal(expenseArray) {
+            let total = 0;
+            for (let i = 0; i < expenseArray.length; i++) {
+                total += expenseArray[i].amount;
+            }
+            return total;
+        }
+
+        // Filter expenses by category
+        function filterExpenses() {
+            const filterCategory = document.getElementById('filterCategory').value;
+            
+            if (filterCategory === 'all') {
+                return expenses;
+            }
+            
+            const filtered = [];
+            for (let i = 0; i < expenses.length; i++) {
+                if (expenses[i].category === filterCategory) {
+                    filtered.push(expenses[i]);
+                }
+            }
+            return filtered;
+        }
+
+        // Display expenses
+        function displayExpenses() {
+            const filteredExpenses = filterExpenses();
+            const expensesList = document.getElementById('expensesList');
+            
+            if (filteredExpenses.length === 0) {
+                expensesList.innerHTML = '<div class="empty-state">No expenses yet. Start tracking!</div>';
+                document.getElementById('totalAmount').textContent = 'Total: ¥0';
+                return;
+            }
+
+            let html = '';
+            for (let i = 0; i < filteredExpenses.length; i++) {
+                const exp = filteredExpenses[i];
+                html += `
+                    <div class="expense-item">
+                        <div class="expense-info">
+                            <div class="expense-name">${exp.name}</div>
+                            <div class="expense-category">${exp.category}</div>
+                        </div>
+                        <div class="expense-amount">¥${exp.amount.toFixed(0)}</div>
+                        <button class="delete-btn" onclick="deleteExpense(${exp.id})">Delete</button>
+                    </div>
+                `;
+            }
+            
+            expensesList.innerHTML = html;
+            
+            const total = calculateTotal(filteredExpenses);
+            document.getElementById('totalAmount').textContent = `Total: ¥${total.toFixed(0)}`;
+        }
+
+        // Load expenses when page loads
+        loadExpenses();
+    </script>
+</body>
+</html>

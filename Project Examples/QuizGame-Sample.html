@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #667eea;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .quiz-section {
+            display: none;
+        }
+
+        .quiz-section.active {
+            display: block;
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .answer-btn {
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        .answer-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .answer-btn.correct {
+            background: #4caf50;
+            color: white;
+        }
+
+        .answer-btn.incorrect {
+            background: #f44336;
+            color: white;
+        }
+
+        .start-btn, .restart-btn, .clear-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .clear-btn {
+            background: #f44336;
+            padding: 10px 30px;
+            font-size: 14px;
+        }
+
+        .results {
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 48px;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .high-score-item {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .name-input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Game</h1>
+        
+        <div id="start-screen" class="quiz-section active">
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                Test your knowledge with 5 fun questions!
+            </p>
+            <button class="start-btn" onclick="startQuiz()">Start Quiz</button>
+            <div id="high-scores-display"></div>
+            <button class="clear-btn" onclick="clearHighScores()">Clear High Scores</button>
+        </div>
+
+        <div id="quiz-screen" class="quiz-section">
+            <div class="progress" id="progress"></div>
+            <div class="question" id="question"></div>
+            <div class="answers" id="answers"></div>
+        </div>
+
+        <div id="results-screen" class="quiz-section">
+            <div class="results">
+                <h2>Quiz Complete!</h2>
+                <div class="score-display" id="final-score"></div>
+                <p id="result-message"></p>
+                <input type="text" id="player-name" class="name-input" placeholder="Enter your name" maxlength="20">
+                <button class="start-btn" onclick="saveScore()">Save Score</button>
+                <button class="restart-btn" onclick="restartQuiz()">Play Again</button>
+                <div class="high-scores" id="results-high-scores"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /*
+        =======================================================================
+        SIMPLE QUIZ GAME
+        =======================================================================
+        PROJECT IDEA #2: Build a quiz game with multiple choice questions!
+        
+        STEP 1: CREATE YOUR QUIZ DATA
+        - Create a questions array that holds question objects
+        - Each question object should have:
+          * question: the question text
+          * answers: an array of 4 possible answers
+          * correct: the index number of the correct answer (0, 1, 2, or 3)
+        - Start with 5 questions, you can add more later!
+        
+        STEP 2: CREATE GAME STATE VARIABLES
+        - Create variables to track:
+          * currentQuestion (which question number you're on)
+          * score (how many correct answers)
+          * answered (whether the current question has been answered yet)
+        
+        STEP 3: CREATE A startQuiz() FUNCTION
+        - Reset all your game state variables to starting values
+        - Use showScreen() to display the quiz screen
+        - Call displayQuestion() to show the first question
+        
+        STEP 4: CREATE A displayQuestion() FUNCTION
+        - Get the current question from your questions array
+        - Update the progress text (Question 1 of 5, etc.)
+        - Display the question text
+        - Clear any old answer buttons
+        - Loop through the answers array and create a button for each one
+        - Each button should call checkAnswer() when clicked
+        
+        STEP 5: CREATE A checkAnswer() FUNCTION
+        - Check if the question was already answered (prevent double-clicking)
+        - Compare the selected answer index with the correct answer
+        - If correct: increment score and add "correct" class to button
+        - If wrong: add "incorrect" class to selected button and "correct" class to right answer
+        - Use setTimeout() to pause for 1.5 seconds, then:
+          * Move to next question
+          * Either display next question OR show results if quiz is done
+        
+        STEP 6: CREATE A showResults() FUNCTION
+        - Use showScreen() to display the results screen
+        - Calculate the percentage score
+        - Display the final score (X out of Y)
+        - Use if/else statements to show different messages based on score
+        - Call displayHighScores() to show the leaderboard
+        
+        STEP 7: CREATE A saveScore() FUNCTION
+        - Get the player's name from the input field
+        - Retrieve existing high scores from localStorage (use JSON.parse)
+        - Add the new score to the array with name, score, total, and date
+        - Sort the scores from highest to lowest
+        - Keep only top 5 scores
+        - Save back to localStorage (use JSON.stringify)
+        - Update the high scores display
+        
+        STEP 8: CREATE A displayHighScores() FUNCTION
+        - Get the container element where scores will display
+        - Retrieve scores from localStorage
+        - If no scores exist, clear the container and exit
+        - Loop through scores and build HTML showing rank, name, score, and date
+        - Set the container's innerHTML to display all scores
+        
+        STEP 9: CREATE HELPER FUNCTIONS
+        - restartQuiz(): go back to start screen and refresh high scores
+        - showScreen(): hide all screens, then show only the one specified
+        - clearHighScores(): remove high scores from localStorage with confirmation
+        
+        STEP 10: INITIALIZE THE GAME
+        - Use window.onload to call displayHighScores() when page loads
+        
+        TIPS:
+        - Test each function as you write it using console.log()
+        - Start with the basic quiz flow, add high scores last
+        - Use document.getElementById() to get elements
+        - Use document.querySelector() or querySelectorAll() for CSS classes
+        - Remember: localStorage only stores strings, use JSON for objects/arrays
+        - The HTML and CSS are already done - focus on the JavaScript!
+        
+        =======================================================================
+        */
+        
+        // STEP 1: Create your questions array here
+        
+        
+        // STEP 2: Create your game state variables here
+        
+        
+        // STEP 3: Create your startQuiz() function here
+        
+        
+        // STEP 4: Create your displayQuestion() function here
+        
+        
+        // STEP 5: Create your checkAnswer() function here
+        
+        
+        // STEP 6: Create your showResults() function here
+        
+        
+        // STEP 7: Create your saveScore() function here
+        
+        
+        // STEP 8: Create your displayHighScores() function here
+        
+        
+        // STEP 9: Create your helper functions here (restartQuiz, showScreen, clearHighScores)
+        
+        
+        // STEP 10: Initialize the game when page loads
+        
+    </script>
+</body>
+</html>
