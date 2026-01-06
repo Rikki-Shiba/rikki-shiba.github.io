@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plain vs flair Game Feel Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #2c3e50;
+            color: white;
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        .container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .panel.plain {
+            background: #34495e;
+            border-right: 3px solid #1a252f;
+        }
+        
+        .panel.flair {
+            background: #2c3e50;
+        }
+        
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        .score-display {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 16px;
+            color: #ecf0f1;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .panel.plain {
+                border-right: none;
+                border-bottom: 3px solid #1a252f;
+            }
+            
+            .header h2 {
+                font-size: 20px;
+            }
+            
+            .header p {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- PLAIN VERSION -->
+        <div class="panel plain">
+            <div class="header">
+                <h2>😐 PLAIN</h2>
+                <p>Basic, no feedback</p>
+            </div>
+            <div class="canvas-container">
+                <canvas id="plainCanvas"></canvas>
+            </div>
+            <div class="score-display" id="plainScore">Score: 0</div>
+            <div class="instructions">Tap the circle!</div>
+        </div>
+
+        <!-- flair VERSION -->
+        <div class="panel flair">
+            <div class="header">
+                <h2>🎉 flair</h2>
+                <p>Satisfying feedback!</p>
+            </div>
+            <div class="canvas-container">
+                <canvas id="flairCanvas"></canvas>
+            </div>
+            <div class="score-display" id="flairScore">Score: 0</div>
+            <div class="instructions">Tap the circle!</div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // PLAIN VERSION - Boring, minimal feedback
+        // ==========================================
+        
+        const plainCanvas = document.getElementById('plainCanvas');
+        const plainCtx = plainCanvas.getContext('2d');
+        const plainScoreEl = document.getElementById('plainScore');
+        
+        // Set canvas size
+        plainCanvas.width = 400;
+        plainCanvas.height = 500;
+        
+        let plainScore = 0;
+        let plainCircleX = 200;
+        let plainCircleY = 250;
+        let plainCircleRadius = 50;
+        
+        function drawPlain() {
+            // Clear
+            plainCtx.fillStyle = '#34495e';
+            plainCtx.fillRect(0, 0, plainCanvas.width, plainCanvas.height);
+            
+            // Draw circle (just a plain circle, nothing fancy)
+            plainCtx.fillStyle = '#3498db';
+            plainCtx.beginPath();
+            plainCtx.arc(plainCircleX, plainCircleY, plainCircleRadius, 0, Math.PI * 2);
+            plainCtx.fill();
+            
+            // Draw score on circle
+            plainCtx.fillStyle = 'white';
+            plainCtx.font = '20px Arial';
+            plainCtx.textAlign = 'center';
+            plainCtx.textBaseline = 'middle';
+            plainCtx.fillText('TAP', plainCircleX, plainCircleY);
+        }
+        
+        plainCanvas.addEventListener('click', function(e) {
+            const rect = plainCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const distance = Math.sqrt((x - plainCircleX) ** 2 + (y - plainCircleY) ** 2);
+            
+            if (distance < plainCircleRadius) {
+                // Just increment score - no effects
+                plainScore++;
+                plainScoreEl.textContent = 'Score: ' + plainScore;
+                
+                // Move to random position immediately
+                plainCircleX = plainCircleRadius + Math.random() * (plainCanvas.width - plainCircleRadius * 2);
+                plainCircleY = plainCircleRadius + Math.random() * (plainCanvas.height - plainCircleRadius * 2);
+                
+                drawPlain();
+            }
+        });
+        
+        plainCanvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            const rect = plainCanvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            const distance = Math.sqrt((x - plainCircleX) ** 2 + (y - plainCircleY) ** 2);
+            
+            if (distance < plainCircleRadius) {
+                plainScore++;
+                plainScoreEl.textContent = 'Score: ' + plainScore;
+                plainCircleX = plainCircleRadius + Math.random() * (plainCanvas.width - plainCircleRadius * 2);
+                plainCircleY = plainCircleRadius + Math.random() * (plainCanvas.height - plainCircleRadius * 2);
+                drawPlain();
+            }
+        });
+        
+        drawPlain();
+        
+        // ==========================================
+        // flair VERSION - Satisfying, lots of feedback
+        // ==========================================
+        
+        const flairCanvas = document.getElementById('flairCanvas');
+        const flairCtx = flairCanvas.getContext('2d');
+        const flairScoreEl = document.getElementById('flairScore');
+        
+        flairCanvas.width = 400;
+        flairCanvas.height = 500;
+        
+        let flairScore = 0;
+        let flairCircleX = 200;
+        let flairCircleY = 250;
+        let flairCircleRadius = 50;
+        let flairCircleScale = 1;
+        let particles = [];
+        let screenShake = 0;
+        let hue = 200; // Start with blue
+        let scorePopups = [];
+        
+        // Particle class
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = 3 + Math.random() * 4;
+                this.speedX = (Math.random() - 0.5) * 8;
+                this.speedY = (Math.random() - 0.5) * 8 - 2; // Bias upward
+                this.color = color;
+                this.life = 1;
+                this.decay = 0.015;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.speedY += 0.2; // Gravity
+                this.life -= this.decay;
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+            
+            isDead() {
+                return this.life <= 0;
+            }
+        }
+        
+        // Score popup class
+        class ScorePopup {
+            constructor(x, y, points) {
+                this.x = x;
+                this.y = y;
+                this.text = '+' + points;
+                this.speedY = -3;
+                this.life = 1;
+                this.decay = 0.02;
+            }
+            
+            update() {
+                this.y += this.speedY;
+                this.speedY += 0.1; // Slow down
+                this.life -= this.decay;
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = '#f39c12';
+                ctx.globalAlpha = this.life;
+                ctx.font = 'bold 32px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.text, this.x, this.y);
+                ctx.globalAlpha = 1;
+            }
+            
+            isDead() {
+                return this.life <= 0;
+            }
+        }
+        
+        function createExplosion(x, y) {
+            // Create 30 particles
+            for (let i = 0; i < 30; i++) {
+                const color = `hsl(${hue}, 100%, ${50 + Math.random() * 30}%)`;
+                particles.push(new Particle(x, y, color));
+            }
+        }
+        
+        function gameLoopflair() {
+            // Apply screen shake
+            let shakeX = 0;
+            let shakeY = 0;
+            if (screenShake > 0) {
+                shakeX = (Math.random() - 0.5) * screenShake;
+                shakeY = (Math.random() - 0.5) * screenShake;
+                screenShake *= 0.9; // Decay shake
+            }
+            
+            flairCtx.save();
+            flairCtx.translate(shakeX, shakeY);
+            
+            // Clear with subtle gradient
+            const gradient = flairCtx.createLinearGradient(0, 0, 0, flairCanvas.height);
+            gradient.addColorStop(0, '#2c3e50');
+            gradient.addColorStop(1, '#34495e');
+            flairCtx.fillStyle = gradient;
+            flairCtx.fillRect(0, 0, flairCanvas.width, flairCanvas.height);
+            
+            // Animate circle scale back to 1
+            if (flairCircleScale > 1) {
+                flairCircleScale -= 0.05;
+                if (flairCircleScale < 1) flairCircleScale = 1;
+            }
+            
+            // Draw circle with pulsing effect
+            const drawRadius = flairCircleRadius * flairCircleScale;
+            
+            // Glow effect
+            flairCtx.shadowBlur = 20;
+            flairCtx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+            
+            // Draw circle with gradient
+            const circleGradient = flairCtx.createRadialGradient(
+                flairCircleX, flairCircleY, 0,
+                flairCircleX, flairCircleY, drawRadius
+            );
+            circleGradient.addColorStop(0, `hsl(${hue}, 100%, 60%)`);
+            circleGradient.addColorStop(1, `hsl(${hue}, 100%, 40%)`);
+            flairCtx.fillStyle = circleGradient;
+            
+            flairCtx.beginPath();
+            flairCtx.arc(flairCircleX, flairCircleY, drawRadius, 0, Math.PI * 2);
+            flairCtx.fill();
+            
+            // Reset shadow
+            flairCtx.shadowBlur = 0;
+            
+            // Highlight on circle
+            const highlightGradient = flairCtx.createRadialGradient(
+                flairCircleX - drawRadius * 0.3,
+                flairCircleY - drawRadius * 0.3,
+                0,
+                flairCircleX,
+                flairCircleY,
+                drawRadius
+            );
+            highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
+            highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            flairCtx.fillStyle = highlightGradient;
+            flairCtx.beginPath();
+            flairCtx.arc(flairCircleX, flairCircleY, drawRadius, 0, Math.PI * 2);
+            flairCtx.fill();
+            
+            // Draw text on circle
+            flairCtx.fillStyle = 'white';
+            flairCtx.font = 'bold 20px Arial';
+            flairCtx.textAlign = 'center';
+            flairCtx.textBaseline = 'middle';
+            flairCtx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            flairCtx.shadowBlur = 4;
+            flairCtx.fillText('TAP!', flairCircleX, flairCircleY);
+            flairCtx.shadowBlur = 0;
+            
+            // Update and draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw(flairCtx);
+                
+                if (particles[i].isDead()) {
+                    particles.splice(i, 1);
+                }
+            }
+            
+            // Update and draw score popups
+            for (let i = scorePopups.length - 1; i >= 0; i--) {
+                scorePopups[i].update();
+                scorePopups[i].draw(flairCtx);
+                
+                if (scorePopups[i].isDead()) {
+                    scorePopups.splice(i, 1);
+                }
+            }
+            
+            flairCtx.restore();
+            
+            requestAnimationFrame(gameLoopflair);
+        }
+        
+        flairCanvas.addEventListener('click', handleflairClick);
+        flairCanvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            const rect = flairCanvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            handleflairClick({
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+        });
+        
+        function handleflairClick(e) {
+            const rect = flairCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const distance = Math.sqrt((x - flairCircleX) ** 2 + (y - flairCircleY) ** 2);
+            
+            if (distance < flairCircleRadius * flairCircleScale) {
+                // Increment score
+                flairScore++;
+                flairScoreEl.textContent = 'Score: ' + flairScore;
+                
+                // EFFECTS!
+                flairCircleScale = 1.4; // Squash effect
+                screenShake = 10; // Screen shake
+                createExplosion(flairCircleX, flairCircleY); // Particles
+                scorePopups.push(new ScorePopup(flairCircleX, flairCircleY, 1)); // Score popup
+                
+                // Change color (cycle through rainbow)
+                hue = (hue + 30) % 360;
+                
+                // Move to random position
+                flairCircleX = flairCircleRadius + Math.random() * (flairCanvas.width - flairCircleRadius * 2);
+                flairCircleY = flairCircleRadius + Math.random() * (flairCanvas.height - flairCircleRadius * 2);
+            }
+        }
+        
+        gameLoopflair();
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const containerWidth = window.innerWidth > 768 ? window.innerWidth / 2 : window.innerWidth;
+            const maxWidth = Math.min(containerWidth - 40, 400);
+            
+            plainCanvas.width = maxWidth;
+            flairCanvas.width = maxWidth;
+            
+            drawPlain();
+        });
+    </script>
+</body>
+</html>
