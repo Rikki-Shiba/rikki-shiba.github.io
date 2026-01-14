@@ -1,0 +1,229 @@
+<!-- Option 2: Fruit Catch -->
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Option 2: Fruit Catch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            touch-action: none;
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+        }
+        
+        canvas {
+            display: block;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Game variables
+        let score = 0;
+        let lives = 3;
+        let basketX = canvas.width / 2;
+        let basketWidth = 100;
+        let basketHeight = 30;
+        let fallingItems = [];
+        let spawnTimer = 0;
+        let spawnInterval = 70;
+
+        // Item types
+        const itemTypes = [
+            { emoji: '🍎', isBomb: false, points: 10, color: '#ff6b6b' },
+            { emoji: '🍊', isBomb: false, points: 15, color: '#ffa500' },
+            { emoji: '🍌', isBomb: false, points: 20, color: '#ffed4e' },
+            { emoji: '🍇', isBomb: false, points: 25, color: '#a28cd8' },
+            { emoji: '💣', isBomb: true, points: -20, color: '#2d3436' }
+        ];
+
+        // Falling item class
+        class FallingItem {
+            constructor() {
+                const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+                this.emoji = type.emoji;
+                this.isBomb = type.isBomb;
+                this.points = type.points;
+                this.color = type.color;
+                
+                this.size = 40;
+                this.x = this.size + Math.random() * (canvas.width - this.size * 2);
+                this.y = -this.size;
+                this.speed = 2 + Math.random() * 2;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.rotation += this.rotationSpeed;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                
+                // Shadow
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.font = `${this.size + 5}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.emoji, 3, 3);
+                
+                // Item
+                ctx.font = `${this.size}px Arial`;
+                ctx.fillText(this.emoji, 0, 0);
+                
+                ctx.restore();
+            }
+
+            isOffScreen() {
+                return this.y > canvas.height + this.size;
+            }
+
+            checkCatch(basketX, basketY) {
+                const basketLeft = basketX - basketWidth / 2;
+                const basketRight = basketX + basketWidth / 2;
+                const basketTop = basketY - basketHeight / 2;
+                
+                return this.x > basketLeft && 
+                       this.x < basketRight && 
+                       this.y > basketTop - this.size / 2 && 
+                       this.y < basketTop + this.size / 2;
+            }
+        }
+
+        // Spawn item
+        function spawnItem() {
+            fallingItems.push(new FallingItem());
+        }
+
+        // Handle touch/mouse
+        function handleMove(e) {
+            e.preventDefault();
+            const touch = e.touches ? e.touches[0] : e;
+            basketX = touch.clientX;
+            
+            // Keep basket on screen
+            if (basketX < basketWidth / 2) basketX = basketWidth / 2;
+            if (basketX > canvas.width - basketWidth / 2) basketX = canvas.width - basketWidth / 2;
+        }
+
+        canvas.addEventListener('touchstart', handleMove);
+        canvas.addEventListener('touchmove', handleMove);
+        canvas.addEventListener('mousemove', handleMove);
+
+        // Game loop
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw ground
+            ctx.fillStyle = '#90EE90';
+            ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+
+            // Spawn items
+            spawnTimer++;
+            if (spawnTimer >= spawnInterval) {
+                spawnItem();
+                spawnTimer = 0;
+            }
+
+            const basketY = canvas.height - 60;
+
+            // Update and draw falling items
+            for (let i = fallingItems.length - 1; i >= 0; i--) {
+                fallingItems[i].update();
+                fallingItems[i].draw();
+
+                // Check if caught
+                if (fallingItems[i].checkCatch(basketX, basketY)) {
+                    if (fallingItems[i].isBomb) {
+                        lives--;
+                        if (lives < 0) lives = 0;
+                    } else {
+                        score += fallingItems[i].points;
+                    }
+                    fallingItems.splice(i, 1);
+                    continue;
+                }
+
+                // Check if missed (only lose life for good items)
+                if (fallingItems[i].isOffScreen()) {
+                    if (!fallingItems[i].isBomb) {
+                        lives--;
+                        if (lives < 0) lives = 0;
+                    }
+                    fallingItems.splice(i, 1);
+                }
+            }
+
+            // Draw basket
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(basketX - basketWidth / 2, basketY - basketHeight / 2, basketWidth, basketHeight);
+            
+            // Basket rim
+            ctx.fillStyle = '#654321';
+            ctx.fillRect(basketX - basketWidth / 2, basketY - basketHeight / 2, basketWidth, 5);
+            
+            // Basket handles
+            ctx.strokeStyle = '#654321';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(basketX - basketWidth / 3, basketY - basketHeight / 2, 10, Math.PI, 0, false);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(basketX + basketWidth / 3, basketY - basketHeight / 2, 10, Math.PI, 0, false);
+            ctx.stroke();
+
+            // Draw UI
+            ctx.fillStyle = '#2d3436';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Score: ' + score, 20, 40);
+            ctx.textAlign = 'right';
+            ctx.fillText('Lives: ' + lives, canvas.width - 20, 40);
+
+            // Draw hearts
+            ctx.fillStyle = '#e74c3c';
+            for (let i = 0; i < lives; i++) {
+                ctx.beginPath();
+                ctx.arc(canvas.width - 90 + i * 30, 60, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Instructions
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.font = '18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Drag to move basket! Catch fruits 🍎 | Avoid bombs 💣', canvas.width / 2, canvas.height - 15);
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>

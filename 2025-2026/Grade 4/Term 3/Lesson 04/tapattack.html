@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Option 3: Tap Attack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            touch-action: none;
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+        }
+        
+        canvas {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Game variables
+        let score = 0;
+        let lives = 3;
+        let targets = [];
+        let spawnTimer = 0;
+        let spawnInterval = 60;
+        let difficulty = 1;
+
+        // Target types
+        const targetTypes = [
+            { color: '#ff6b6b', points: 10, lifetime: 120, size: 50 },
+            { color: '#feca57', points: 20, lifetime: 90, size: 40 },
+            { color: '#48dbfb', points: 30, lifetime: 60, size: 30 },
+            { color: '#ff9ff3', points: 50, lifetime: 45, size: 25 }
+        ];
+
+        // Target class
+        class Target {
+            constructor() {
+                const type = targetTypes[Math.floor(Math.random() * targetTypes.length)];
+                
+                this.color = type.color;
+                this.points = type.points;
+                this.maxLifetime = type.lifetime;
+                this.lifetime = type.lifetime;
+                this.radius = type.size;
+                
+                this.x = this.radius + 20 + Math.random() * (canvas.width - this.radius * 2 - 40);
+                this.y = this.radius + 80 + Math.random() * (canvas.height - this.radius * 2 - 120);
+                
+                this.pulsePhase = Math.random() * Math.PI * 2;
+                this.pulseSpeed = 0.1;
+                
+                this.scale = 0;
+                this.scaleSpeed = 0.1;
+            }
+
+            update() {
+                this.lifetime--;
+                this.pulsePhase += this.pulseSpeed;
+                
+                if (this.scale < 1) {
+                    this.scale += this.scaleSpeed;
+                    if (this.scale > 1) this.scale = 1;
+                }
+            }
+
+            draw() {
+                const lifePercent = this.lifetime / this.maxLifetime;
+                const pulse = 1 + Math.sin(this.pulsePhase) * 0.1;
+                const drawRadius = this.radius * pulse * this.scale;
+                
+                // Outer warning ring
+                ctx.strokeStyle = lifePercent > 0.3 ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 0, 0, 0.8)';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, drawRadius + 10, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Progress ring
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, drawRadius + 15, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * lifePercent));
+                ctx.stroke();
+                
+                // Shadow
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.beginPath();
+                ctx.arc(this.x + 5, this.y + 5, drawRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Main circle with gradient
+                const gradient = ctx.createRadialGradient(
+                    this.x - drawRadius * 0.3,
+                    this.y - drawRadius * 0.3,
+                    0,
+                    this.x,
+                    this.y,
+                    drawRadius
+                );
+                gradient.addColorStop(0, this.color);
+                gradient.addColorStop(1, this.adjustBrightness(this.color, -40));
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, drawRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Highlight
+                const highlight = ctx.createRadialGradient(
+                    this.x - drawRadius * 0.4,
+                    this.y - drawRadius * 0.4,
+                    0,
+                    this.x,
+                    this.y,
+                    drawRadius
+                );
+                highlight.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+                highlight.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
+                highlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = highlight;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, drawRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Points text
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${Math.floor(this.radius * 0.6)}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                ctx.shadowBlur = 4;
+                ctx.fillText(this.points, this.x, this.y);
+                ctx.shadowBlur = 0;
+            }
+
+            adjustBrightness(color, amount) {
+                // Fixed brightness adjustment
+                let hex = color.replace('#', '');
+                let num = parseInt(hex, 16);
+                
+                let r = Math.max(0, Math.min(255, (num >> 16) + amount));
+                let g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amount));
+                let b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
+                
+                // Ensure proper hex formatting
+                let result = '#' + 
+                    r.toString(16).padStart(2, '0') + 
+                    g.toString(16).padStart(2, '0') + 
+                    b.toString(16).padStart(2, '0');
+                
+                return result;
+            }
+
+            isDead() {
+                return this.lifetime <= 0;
+            }
+
+            checkHit(touchX, touchY) {
+                const distance = Math.sqrt((touchX - this.x) ** 2 + (touchY - this.y) ** 2);
+                return distance < this.radius * this.scale;
+            }
+        }
+
+        function spawnTarget() {
+            targets.push(new Target());
+        }
+
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches ? e.touches[0] : e;
+            const touchX = touch.clientX;
+            const touchY = touch.clientY;
+
+            for (let i = targets.length - 1; i >= 0; i--) {
+                if (targets[i].checkHit(touchX, touchY)) {
+                    score += targets[i].points;
+                    targets.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('mousedown', handleTouch);
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            difficulty = 1 + Math.floor(score / 200) * 0.3;
+            spawnInterval = Math.max(30, 60 - Math.floor(score / 200) * 5);
+
+            spawnTimer++;
+            if (spawnTimer >= spawnInterval && targets.length < 5) {
+                spawnTarget();
+                spawnTimer = 0;
+            }
+
+            for (let i = targets.length - 1; i >= 0; i--) {
+                targets[i].update();
+                targets[i].draw();
+
+                if (targets[i].isDead()) {
+                    targets.splice(i, 1);
+                    lives--;
+                    if (lives < 0) lives = 0;
+                }
+            }
+
+            // Draw UI
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'left';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 5;
+            ctx.fillText('Score: ' + score, 20, 40);
+            ctx.textAlign = 'right';
+            ctx.fillText('Lives: ' + lives, canvas.width - 20, 40);
+            ctx.shadowBlur = 0;
+
+            // Draw hearts
+            ctx.fillStyle = '#e74c3c';
+            for (let i = 0; i < lives; i++) {
+                ctx.beginPath();
+                ctx.arc(canvas.width - 100 + i * 35, 65, 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Instructions
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Tap targets before they disappear!', canvas.width / 2, canvas.height - 20);
+            
+            // Color guide
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillText('Red=10pts', canvas.width / 2 - 150, canvas.height - 45);
+            ctx.fillStyle = '#feca57';
+            ctx.fillText('Yellow=20pts', canvas.width / 2 - 40, canvas.height - 45);
+            ctx.fillStyle = '#48dbfb';
+            ctx.fillText('Blue=30pts', canvas.width / 2 + 70, canvas.height - 45);
+            ctx.fillStyle = '#ff9ff3';
+            ctx.fillText('Pink=50pts', canvas.width / 2 + 180, canvas.height - 45);
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
