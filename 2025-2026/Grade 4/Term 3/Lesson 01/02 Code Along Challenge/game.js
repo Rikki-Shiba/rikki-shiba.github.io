@@ -26,4 +26,4 @@ ctx.arc(400, 450, 100, 0, Math.PI);
 ctx.fill();
 
 // 4. Something original by yourself
-// -blank-
+// Text

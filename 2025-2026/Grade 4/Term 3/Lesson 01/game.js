@@ -12,22 +12,22 @@ canvas.height = window.innerHeight;
 // Drawing a Rectangle - ctx.fillRect(x, y, width, height)
 
 // Draw a red rectangle
-//ctx.fillStyle = 'red';
-//ctx.fillRect(100, 100, 200, 150);
+ctx.fillStyle = 'red';
+ctx.fillRect(100, 100, 200, 150);
 
 // Draw a blue square
-//ctx.fillStyle = 'blue';
-//ctx.fillRect(400, 300, 100, 100);
+ctx.fillStyle = 'blue';
+ctx.fillRect(400, 300, 100, 100);
 
 
 // Drawing a Circle - Circles are drawn with "arcs"
 // ctx.arc(x, y, radius, startAngle, endAngle)
 
 // Draw a yellow circle
-//ctx.fillStyle = 'yellow';
-//ctx.beginPath();            // Tells the canvas to start drawing a new path, otherwise it connects to the last co-ord used
-//ctx.arc(300, 200, 50, 0, Math.PI * 2);      // draw outline of full circle.
-//ctx.fill();
+ctx.fillStyle = 'yellow';
+ctx.beginPath();            // Tells the canvas to start drawing a new path, otherwise it connects to the last co-ord used
+ctx.arc(300, 200, 50, 0, Math.PI * 2);      // draw outline of full circle.
+ctx.fill();
 
 
 // Drawing Text
