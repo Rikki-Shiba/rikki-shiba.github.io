@@ -13,6 +13,7 @@ let targetY = ballY;
 canvas.addEventListener('touchstart', function(e) {
 	e.preventDefault();
 	const touch = e.touches[0];
+
 	targetX = touch.clientX;
 	targetY = touch.clientY;
 });
@@ -32,3 +33,5 @@ function gameLoop() {
 
 	requestAnimationFrame(gameLoop);
 }
+
+gameLoop();
