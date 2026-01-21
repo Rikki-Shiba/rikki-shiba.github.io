@@ -24,7 +24,7 @@ function gameLoop() {
 	// Draw ball
 	ctx.fillStyle = 'orange';
 	ctx.beginPath();
-	ctx.arc(ballX, ballY, ballRadius, 0, MathPI * 2);
+	ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
 	ctx.fill();
 
 	requestAnimationFrame(gameLoop);
