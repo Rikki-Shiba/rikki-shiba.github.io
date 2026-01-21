@@ -16,7 +16,7 @@ canvas.addEventListener('touchstart', function(e) {
 	// Move ball to touch position
 	ballX = touch.clientX;
 	ballY = touch.clientY;
-})
+});
 
 function gameLoop() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
