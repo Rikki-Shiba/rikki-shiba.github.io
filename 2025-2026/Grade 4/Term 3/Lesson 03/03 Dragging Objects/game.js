@@ -25,6 +25,7 @@ function isTouchingBall(touchX, touchY) {
 // Touch start
 canvas.addEventListener('touchstart', function(e) {
 	e.preventDefault();
+    const touch = e.touches[0];
 	
 	if (isTouchingBall(touch.clientX, touch.clientY)) {
 		isDragging = true;
