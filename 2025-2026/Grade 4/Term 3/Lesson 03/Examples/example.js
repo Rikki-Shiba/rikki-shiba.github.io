@@ -21,6 +21,11 @@ canvas.addEventListener('touchstart', function(e) {
     }
 });
 
+function randomColor() {
+    // Math.ceil(ing) rounds up | Math.floor rounds down
+    return Math.ceil(Math.random() * 255);
+}
+
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -31,7 +36,7 @@ function gameLoop() {
 
     // Draw button
     let.drawRadius = buttonRadius * buttonScale;
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = `rgb(${randomColor()},${randomColor()},${randomColor()})`;
     ctx.beginPath();
     ctx.arc(buttonX, buttonY, drawRadius, 0, Math.PI * 2);
     ctx.fill();
