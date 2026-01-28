@@ -4,6 +4,10 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+let ballX = canvas.width / 2;
+let ballY = canvas.height / 2;
+let radius = 40;
+
 // 1. Pulse Effect
 let scale = 1;
 let scaleDirection = 0.01;

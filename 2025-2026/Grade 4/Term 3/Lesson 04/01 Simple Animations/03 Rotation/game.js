@@ -4,6 +4,10 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+let ballX = canvas.width / 2;
+let ballY = canvas.height / 2;
+let radius = 40;
+
 let angle = 0;
 
 function gameLoop() {
