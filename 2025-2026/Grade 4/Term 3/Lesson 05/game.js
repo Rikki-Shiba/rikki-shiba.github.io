@@ -35,11 +35,11 @@ function hitCircle(touchX, touchY, circleX, circleY, radius) {
 	return distance < radius;
 }
 
-canvas.addEventHandler('touchstart', function(e) {
+canvas.addEventListener('touchstart', function(e) {
 	e.preventDefault();
-	const touch = e.touches[0];
-	const touchX = touch.clientX;
-	const touchY = touch.clientY;
+	let touch = e.touches[0];
+	let touchX = touch.clientX;
+	let touchY = touch.clientY;
 
 	// Check if hit
 	isHit = hitCircle(touchX, touchY, targetX, targetY, targetRadius);
