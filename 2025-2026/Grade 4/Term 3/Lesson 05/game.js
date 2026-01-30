@@ -58,5 +58,22 @@ canvas.addEventListener('touchstart', function(e) {
 
 });		
 
+// MouseClick for debugging
+canvas.addEventListener('mousedown', function(e) {
+	isHit = hitCircle(e.clientX, e.clientY, targetX, targetY, targetRadius);
+	draw();
+
+	// Reset after 500ms
+	setTimeout(function() {
+		isHit = false;
+
+		// Move target to a random position
+		targetX = targetRadius + Math.random() * (canvas.width - targetRadius * 2);
+		targetY = targetRadius + Math.random() * (canvas.height - targetRadius * 2);
+        
+		draw();
+	}, 500);
+})
+
 // Initial draw
 draw();
