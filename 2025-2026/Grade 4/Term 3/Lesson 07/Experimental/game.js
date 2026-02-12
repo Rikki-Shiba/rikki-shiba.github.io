@@ -13,9 +13,18 @@ let spawnTimer = 0;
 let spawnInterval = 60;	    // Spawn every 60 frames (1 second)
 
 // Testing Effects
-let CIRCLES_PULSE = true;       // Set to true to enable pulsing circles
-let CIRCLES_FLASH = true;       // Set to true to enable flashing circles
-let TEXT_STROKE = true;         // Add a black stroke to the score text
+let CIRCLES_PULSE = false;       // Set to true to enable pulsing circles
+let CIRCLES_FLASH = false;       // Set to true to enable flashing circles
+let CIRCLES_SWAY = false;		// Set to true to enable circles to sway left and right
+let TEXT_STROKE = false;         // Add a black stroke to the score text
+
+// Button layout for start screen toggles
+let toggleButtons = [
+    { label: 'PULSE',  get: () => CIRCLES_PULSE,  toggle: () => { CIRCLES_PULSE  = !CIRCLES_PULSE;  }, x: 0, y: 0, w: 160, h: 44 },
+    { label: 'FLASH',  get: () => CIRCLES_FLASH,  toggle: () => { CIRCLES_FLASH  = !CIRCLES_FLASH;  }, x: 0, y: 0, w: 160, h: 44 },
+    { label: 'SWAY',   get: () => CIRCLES_SWAY,   toggle: () => { CIRCLES_SWAY   = !CIRCLES_SWAY;   }, x: 0, y: 0, w: 160, h: 44 },
+    { label: 'STROKE', get: () => TEXT_STROKE,     toggle: () => { TEXT_STROKE    = !TEXT_STROKE;    }, x: 0, y: 0, w: 160, h: 44 },
+];
 
 // Circle Functions
 function spawnCircle() {
@@ -28,6 +37,8 @@ function spawnCircle() {
 		points: 10,		                                    // Worth 10 points
         scale: 1.0,                                         // Size pulse effect
         scaleDirection: 0.01,
+		sway: 0,
+		swayDirection: 2,									// Sways 2 pixels per frame
         flash: 0,                                           // Color flash effect
         flashDirection: 0.5
 	};
@@ -79,12 +90,39 @@ function gameLoop() {
 // Game State: START (Start Screen)
 function drawStartScreen() {
 	ctx.fillStyle = 'white';
-	ctx.font = 'bold 48px Arial';
-	ctx.textAlign = 'center';
-	ctx.fillText('TAP TO START', canvas.width / 2, canvas.height / 2);
+    ctx.font = 'bold 48px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('TAP TO START', canvas.width / 2, canvas.height / 2);
 
-	ctx.font = '20px Arial';
-	ctx.fillText('Tap the circles before they escape!', canvas.width / 2, canvas.height / 2 + 60);
+    ctx.font = '20px Arial';
+    ctx.fillText('Tap the circles before they escape!', canvas.width / 2, canvas.height / 2 + 60);
+
+    // Draw toggle buttons
+    const btnW = 160, btnH = 44, gap = 12;
+    const totalW = toggleButtons.length * btnW + (toggleButtons.length - 1) * gap;
+    const startX = canvas.width / 2 - totalW / 2;
+    const btnY = canvas.height / 2 + 120;
+
+    toggleButtons.forEach((btn, i) => {
+        btn.x = startX + i * (btnW + gap);
+        btn.y = btnY;
+        btn.w = btnW;
+        btn.h = btnH;
+
+        const isOn = btn.get();
+
+        // Button background
+        ctx.fillStyle = isOn ? '#4CAF50' : '#888';
+        ctx.beginPath();
+        ctx.roundRect(btn.x, btn.y, btn.w, btn.h, 8);
+        ctx.fill();
+
+        // Button text
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 15px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(btn.label + ': ' + (isOn ? 'ON' : 'OFF'), btn.x + btn.w / 2, btn.y + btn.h / 2 + 5);
+    });
 }
 
 // Update Game Function
@@ -146,12 +184,22 @@ function drawGame() {
                 circles[i].scaleDirection = -circles[i].scaleDirection;
             }
         } else {
-            circles[i].scale = 0;
+            circles[i].scale = 1;
         }
+
+		// Sway Effect
+		if (CIRCLES_SWAY) {
+			circles[i].sway += circles[i].swayDirection;
+			if (circles[i].sway > 40 || circles[i].sway < -40) {
+				circles[i].swayDirection = -circles[i].swayDirection;
+			}
+		} else {
+			circles[i].sway = 0;
+		}
         
         ctx.fillStyle = updateColor(circles[i].color, circles[i].flash);
 		ctx.beginPath();
-		ctx.arc(circles[i].x, circles[i].y, circles[i].radius * circles[i].scale, 0, Math.PI * 2);
+		ctx.arc(circles[i].x + circles[i].sway, circles[i].y, circles[i].radius * circles[i].scale, 0, Math.PI * 2);
 		ctx.fill();
 
         ctx.font = 'bold 16px Arial';
@@ -162,11 +210,11 @@ function drawGame() {
             // Draw stroke first (outline)
             ctx.strokeStyle = '#000';
             ctx.lineWidth = 3; // 1px might be too thin
-            ctx.strokeText(circles[i].points, circles[i].x, circles[i].y + 5);
+            ctx.strokeText(circles[i].points, circles[i].x + circles[i].sway, circles[i].y + 5);
         }
         
         ctx.fillStyle = '#87CEEB';
-        ctx.fillText(circles[i].points, circles[i].x, circles[i].y + 5);
+        ctx.fillText(circles[i].points, circles[i].x + circles[i].sway, circles[i].y + 5);
 	}
 
     // Draw score and lives
@@ -189,7 +237,7 @@ function drawGameOverScreen() {
 	ctx.fillText('Score: ' + score, canvas.width / 2, canvas.height / 2);
 
 	ctx.font = '24px Arial';
-	ctx.fillText('TAP TO PLAY AGAIN', canvas.width / 2, 
+	ctx.fillText('TAP TO RETURN TO THE START SCREEN', canvas.width / 2, 
 		canvas.height / 2 +	80);
 }
 
@@ -203,7 +251,9 @@ canvas.addEventListener('touchstart', function(e) {
 	if (gameState === 'START') {
 		
         // Start the game!
-		startGame();
+		if (!handleToggleClick(touchX, touchY)) {
+        	startGame();
+    	}
     } else if (gameState === 'PLAYING') {
 		
         // Check if any circles are hit
@@ -215,8 +265,8 @@ canvas.addEventListener('touchstart', function(e) {
 			}
 		}
     } else if (gameState === 'GAME_OVER') {
-		// Restart
-		startGame();
+		// Go back to the start screen
+		gameState = 'START';
 	}
 });
 
@@ -228,7 +278,9 @@ canvas.addEventListener('mousedown', function(e) {
     if (gameState === 'START') {
 		
         // Start the game!
-		startGame();
+		if (!handleToggleClick(touchX, touchY)) {
+        	startGame();
+    	}
     } else if (gameState === 'PLAYING') {
 		
         // Check if any circles are hit
@@ -240,8 +292,8 @@ canvas.addEventListener('mousedown', function(e) {
 			}
 		}
     } else if (gameState === 'GAME_OVER') {
-		// Restart
-		startGame();
+		// Go back to the start screen
+		gameState = 'START';
 	}
 })
 
@@ -253,5 +305,16 @@ function startGame() {
 	spawnTimer = 0;
 }
 
+function handleToggleClick(clickX, clickY) {
+    if (gameState !== 'START') return false;
+    for (let btn of toggleButtons) {
+        if (clickX >= btn.x && clickX <= btn.x + btn.w &&
+            clickY >= btn.y && clickY <= btn.y + btn.h) {
+            btn.toggle();
+            return true;
+        }
+    }
+    return false;
+}
 
 gameLoop();
