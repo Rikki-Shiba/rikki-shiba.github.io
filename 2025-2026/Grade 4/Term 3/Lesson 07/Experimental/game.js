@@ -23,7 +23,7 @@ let toggleButtons = [
     { label: 'PULSE',  get: () => CIRCLES_PULSE,  toggle: () => { CIRCLES_PULSE  = !CIRCLES_PULSE;  }, x: 0, y: 0, w: 160, h: 44 },
     { label: 'FLASH',  get: () => CIRCLES_FLASH,  toggle: () => { CIRCLES_FLASH  = !CIRCLES_FLASH;  }, x: 0, y: 0, w: 160, h: 44 },
     { label: 'SWAY',   get: () => CIRCLES_SWAY,   toggle: () => { CIRCLES_SWAY   = !CIRCLES_SWAY;   }, x: 0, y: 0, w: 160, h: 44 },
-    { label: 'STROKE', get: () => TEXT_STROKE,     toggle: () => { TEXT_STROKE    = !TEXT_STROKE;    }, x: 0, y: 0, w: 160, h: 44 },
+    { label: 'STROKE', get: () => TEXT_STROKE,    toggle: () => { TEXT_STROKE    = !TEXT_STROKE;    }, x: 0, y: 0, w: 160, h: 44 },
 ];
 
 // Circle Functions
@@ -52,6 +52,7 @@ function getRandomColor() {
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
+// Currently unused
 function getInverseColor(rgbString) {
     const match = rgbString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (match) {
